@@ -10,7 +10,7 @@ const BALL_SIZE = 1 // 5 scaled pixels
 const BLOCK_TOP = 10
 const BLOCK_GAP = 10
 
-const NUM_BALLS_LEVEL = 5
+const NUM_BALLS_LEVEL = 3
 
 const SCREENS = [
     [ //Level 1
@@ -94,6 +94,7 @@ const canvas = document.getElementById("app")
 const context = canvas.getContext("2d")
 const ballsToLive = document.getElementById("balls")
 const levelToPlay = document.getElementById("level")
+const gameOverLogo = document.getElementById("GameOver")
 
 canvas.width = BOARD_WIDTH * SCALE
 canvas.height = BOARD_HEIGHT * SCALE
@@ -356,8 +357,9 @@ class Game {
                     this.ball = new Ball()
                     this.play()
                 } else {
+                    gameOverLogo.style.display = "inline-block"
                     gameOver.play()
-                    gameOver.onended = function () {window.alert("Game Over ... No more balls")}
+                    //gameOver.onended = function () {window.alert("Game Over ... No more balls")}
                 }
 
             } else if (ret == "newLevel") {
