@@ -227,6 +227,7 @@ class Board {
         }
 
         SCREENS[level - 1].forEach((i) => {
+            this.numBlocks += i.blocks_in_line
             let row = []
             let gap = Math.floor((BOARD_WIDTH - (i.block_width * i.blocks_in_line)) / (i.blocks_in_line + 1))
             for (let k = 0; k < i.block_heigh; k++) {
@@ -240,7 +241,6 @@ class Board {
 
                 for (let l = 0; l < i.blocks_in_line; l++) {
                     //Block
-                    this.numBlocks += 1
                     for (let j = 0; (j < i.block_width) && (idx < BOARD_WIDTH); j++) {
                         row[idx] = new Cell(1, i.color)
                         idx++
