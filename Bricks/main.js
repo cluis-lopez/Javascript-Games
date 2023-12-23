@@ -10,7 +10,7 @@ const BALL_SIZE = 1 // 5 scaled pixels
 const BLOCK_TOP = 10
 const BLOCK_GAP = 10
 
-const NUM_BALLS_LEVEL = 5
+const NUM_BALLS_LEVEL = 3
 
 const SCREENS = [
     [ //Level 1
@@ -94,6 +94,7 @@ const canvas = document.getElementById("app")
 const context = canvas.getContext("2d")
 const ballsToLive = document.getElementById("balls")
 const levelToPlay = document.getElementById("level")
+const gameOverLogo = document.getElementById("GameOver")
 
 canvas.width = BOARD_WIDTH * SCALE
 canvas.height = BOARD_HEIGHT * SCALE
@@ -147,6 +148,7 @@ class Ball {
     position = {}
     previousP = {}
     direction = {}
+
     constructor() {
         this.position.x = Math.floor(Math.random() * (BOARD_WIDTH - BALL_SIZE))
         this.position.y = BOARD_HEIGHT - PADDLE_PADDING - PADDLE_HEIGHT
@@ -176,6 +178,7 @@ class Ball {
         if (b.board[this.position.y][this.position.x].value != 0) {
             b.removeBlock(this.position.y, this.position.x)
             b.initDrawBoard()
+            p.updatePaddle()
             this.direction.y *= -1
             return true
         }
@@ -184,7 +187,7 @@ class Ball {
                 this.direction.y = -BALL_SIZE
                 if (this.position.x <= p.posX + p.width / 3 || this.position.x >= p.posX + 2 * p.width / 3)
                     this.direction.x *= -1
-                rebootBall.play();
+                rebootBall.play()
                 return true
             } else {
                 return false
@@ -224,6 +227,7 @@ class Board {
         }
 
         SCREENS[level - 1].forEach((i) => {
+            this.numBlocks += i.blocks_in_line
             let row = []
             let gap = Math.floor((BOARD_WIDTH - (i.block_width * i.blocks_in_line)) / (i.blocks_in_line + 1))
             for (let k = 0; k < i.block_heigh; k++) {
@@ -237,7 +241,6 @@ class Board {
 
                 for (let l = 0; l < i.blocks_in_line; l++) {
                     //Block
-                    this.numBlocks += 1
                     for (let j = 0; (j < i.block_width) && (idx < BOARD_WIDTH); j++) {
                         row[idx] = new Cell(1, i.color)
                         idx++
@@ -337,13 +340,16 @@ class Game {
     play() {
 
         this.board.initDrawBoard()
+        this.paddle.updatePaddle()
 
         document.addEventListener('keydown', event => {
             if (event.key === 'ArrowLeft') {
                 this.paddle.moveLeft()
+                this.paddle.updatePaddle()
             }
             if (event.key === 'ArrowRight') {
                 this.paddle.moveRight()
+                this.paddle.updatePaddle()
             }
         })
 
@@ -356,15 +362,19 @@ class Game {
                     this.ball = new Ball()
                     this.play()
                 } else {
+                    gameOverLogo.style.display = "inline-block"
                     gameOver.play()
-                    gameOver.onended = function () {window.alert("Game Over ... No more balls")}
+                    //gameOver.onended = function () {window.alert("Game Over ... No more balls")}
                 }
 
             } else if (ret == "newLevel") {
                 this.level++
-                if (this.level > SCREENS.length)
-                    window.alert ("End of game. No more levels to play")
-                else {
+                if (this.level > SCREENS.length) {
+                    gameOverLogo.innerText = "Game Ended"
+                    gameOverLogo.style.display = "inline-block"
+                    gameOver.play()
+                    window.alert("End of game. No more levels to play")
+                } else {
                     this.board = new Board(this.level)
                     this.paddle = new Paddle(this.level)
                     this.ball = new Ball()
@@ -381,7 +391,7 @@ function playLevel(board, paddle, ball, callback) {
     let lastTime = 0
     let speed = 20
     let score = 0
-    
+
     update()
 
     async function update(time = 0) {
@@ -393,25 +403,26 @@ function playLevel(board, paddle, ball, callback) {
 
         if (dropCounter > speed) {
             dropCounter = 0
-            ball.updateBall()
-
-            if (board.numBlocks == 0) {
-                callback("newLevel")
-            }
 
             if (!ball.move(paddle, board)) { //Bola al agujero
-                ball.removePrevious()
                 lostBall.play()
                 await new Promise(r => setTimeout(r, 2000))
                 callback("newBall")
             }
+
+            ball.updateBall()
+            if (ball.previousP.y == PADDLE_HPOS)
+                paddle.updatePaddle()
+
+            if (board.numBlocks == 0) {
+                callback("newLevel")
+            }
         }
-        paddle.updatePaddle()
         window.requestAnimationFrame(update)
     }
 }
 
-game = new Game()
+let game = new Game()
 game.play()
 
 

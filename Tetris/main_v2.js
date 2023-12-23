@@ -213,7 +213,7 @@ function removeRows() {
 
     score += 100 * (rowsToRemove.length ** 2)
     $score.innerText = score
-    speed -= (rowsToRemove.length > 0 ? 50  : 0)
+    speed -= (rowsToRemove.length > 0 ? 50 : 0)
 
     rowsToRemove.forEach(y => {
         board.splice(y, 1)
