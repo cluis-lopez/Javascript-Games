@@ -1,0 +1,41 @@
+<html>
+
+<head>
+    <title>Solitaire</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans">
+    <link href="./styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main">
+        <div class="header">
+            <span id="newgame">Nuevo Juego</span>
+            <span id="counter">Time</span>
+        </div>
+        <div id="boardContainer">
+            <div class="upperrow" id="mazoP"><img src="Cartas/back.png" class="imgResponsive" draggable="false"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="upperrow" id="mazo0" ondrop="dropMazo(event, 0)" ondragover="allowDrop(event)"></div>
+            <div class="upperrow" id="mazo1" ondrop="dropMazo(event, 1)" ondragover="allowDrop(event)"></div>
+            <div class="upperrow" id="mazo2" ondrop="dropMazo(event, 2)" ondragover="allowDrop(event)"></div>
+            <div class="upperrow" id="mazo3" ondrop="dropMazo(event, 3)" ondragover="allowDrop(event)"></div>
+
+            <div id="mazoT"></div>
+            <div class="separator"></div>
+            <div class="pila" id="pila0" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila1" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila2" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila3" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila4" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila5" ondragover="allowDrop(event)"></div>
+            <div class="pila" id="pila6" ondragover="allowDrop(event)"></div>
+        </div>
+    </div>
+    <script src="domPlay.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

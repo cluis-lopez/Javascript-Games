@@ -1,0 +1,77 @@
+body {
+    font-size: large;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+    padding: 20px;
+    width: 80%;
+}
+
+.hide {
+    transition: 0.01s;
+    transform: translateX(-9999px);
+}
+
+#newgame {
+    align-content: left;
+}
+
+#counter {
+    align-content: right;
+}
+
+.imgResponsive {
+    width: 100px;
+    min-width: 50px;
+    max-width: 200px;
+    height: auto;
+}
+
+#boardContainer {
+    background-color: rgb(11, 137, 11);
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto;
+    grid-template-rows: 200px 400px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    width: auto;
+    min-width: 1000px;
+    height: 610px;
+    padding: 30px;
+    ;
+}
+
+.upperrow {
+    width: 100px;
+    min-width: 50px;
+    max-width: 200px;
+    height: calc(100px * 1.452);
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    text-align: center;
+    position: relative;
+}
+
+.separator {
+    width: 100px;
+    min-width: 50px;
+    max-width: 200px;
+    height: calc(100px * 1.452);
+
+}
+
+#mazoT {
+    position: relative;
+    width: 100px;
+    min-width: 50px;
+    max-width: 200px;
+}
+
+.pila {
+    position: relative;
+    width: 100px;
+    min-width: 50px;
+    max-width: 200px;
+}
