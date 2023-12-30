@@ -110,18 +110,12 @@ function mayMoveToMazo(numMazo, carta){
 }
 
 function sacarDelMazo(num=3){
-    let ret = []
     for (let i=0; i<num; i++){
         let c = mazoPrincipal.robarCarta()
         if (c != undefined){
-            mazoTemporal.unshift(c)
-            ret.unshift(c)
-         } //BUG???
+            mazoTemporal.push(c)
+         }
     }
-    if (mazoPrincipal.length == 0){
-        $mazoP.removeChild($mazoP.lastElementChild())
-    }
-    return ret
 }
 
 function isFinJuego(){

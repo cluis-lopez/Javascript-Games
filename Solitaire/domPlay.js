@@ -221,30 +221,23 @@ function dom_reiniciaMazoP() {
 
 //Mazo Temporal
 
-function dom_drawMazoTemporal(cartas) {
-    let l = cartas.length //l may be 0, 1 or 2
-    //Borra las cartas actuales antes de pintar las nuevas
-    let nodes = $mazoT.childNodes
-    for(let i=nodes.length; i>l; i--) {
+function dom_drawMazoTemporal() {
+    //Borra el mazo temporal
+    while($mazoT.firstChild) {
         $mazoT.removeChild($mazoT.lastChild)
     }
-
-    for (let i = l-1; i >= 0 ; i--) {
+    //Ahora pinta las tres últimas cartas del mazo temporal (si las hay)
+    let count = mazoTemporal.length >= 3 ? 3 : mazoTemporal.length
+    for (let i=0; i <count ; i++) {
         n = document.createElement("img")
-        n.setAttribute("src", cartas[i].file)
+        n.setAttribute("src", mazoTemporal[mazoTemporal.length-count+i].file)
         n.setAttribute("draggable", "false")
         n.setAttribute("class", "imgResponsive")
         n.setAttribute("id", "CartaMazoT:")
         n.style.position = "absolute"
         n.style.left = "0px"
         n.style.top = (30 * i) + "px"
-        //$mazoT.appendChild(n)
-        modes = $mazoT.childNodes
-        if (nodes.length > 0){ //Quedan cartas colgadas en el mazo temporal
-            $mazoT.insertBefore(n, nodes[nodes.length-1])
-        } else {
-            $mazoT.appendChild(n)
-        }
+        $mazoT.appendChild(n)
     }
     //Hace draggable la ultima carta
     n.setAttribute("draggable", "true")
@@ -266,7 +259,8 @@ function dom_sacaMazoTemporal() {
 
 $mazoP.addEventListener("click", function () {
     if (mazoPrincipal.numCartas > 0) {
-        dom_drawMazoTemporal(sacarDelMazo())
+        sacarDelMazo()
+        dom_drawMazoTemporal()
         if (mazoPrincipal.numCartas == 0) {
             dom_vaciaMazoP()
         }
