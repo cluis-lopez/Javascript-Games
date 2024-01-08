@@ -121,7 +121,6 @@ function sacarDelMazo(num = 3) {
 }
 
 function mayGoMazo(carta) {
-    console.log("Doble Click")
     for (i in mazos) {
         mazo = mazos[i]
         if (mazo.length == 0 && carta.valor == 1) return i
