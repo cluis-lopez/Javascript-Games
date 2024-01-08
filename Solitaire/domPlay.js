@@ -5,6 +5,7 @@ const $mazos = []
 const $mazoT = document.getElementById("mazoT")
 const $counter = document.getElementById('counter')
 const $newGame = document.getElementById('newgame')
+var isPaused = false
 
 //Initialize DOM elements
 for (let i = 0; i < 7; i++) {
@@ -17,6 +18,7 @@ for (let i = 0; i < 4; i++) {
 
 //Actualiza contador
 function dom_contador() {
+    if (isPaused) return
     segundos++
     if (segundos == 60) {
         segundos = 0
@@ -78,10 +80,10 @@ function dropPila(ev, pila) {
         return
     } else if ((data.fromPila > 6 && data.fromPila < 11) &&
         (pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color)) {
-        carta = mazos[data.fromPila-7].pop()
+        carta = mazos[data.fromPila - 7].pop()
         dom_anadeAPila(pila, carta)
         pilas[pila].push(carta)
-        dom_sacaDeMazo(data.fromPila-7)
+        dom_sacaDeMazo(data.fromPila - 7)
     } else if ((lDestino == 0 && data.carta.valor == 13) ||
         pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color) { //.. O la ultima carta de la pila destino es del mismo palo y el valor inmediatamente superior
 
@@ -129,7 +131,10 @@ function dropMazo(ev, mazo) {
             dom_muestraUltimaCartaPila(data.fromPila)
         }
         if (!isFinJuego()) return
-        else window.alert("CONSEGUIDO !!!!")
+        else {
+            isPaused = true
+            window.alert("CONSEGUIDO !!!!")
+        }
     }
     return false
 }
@@ -188,7 +193,7 @@ function dom_dibujaPilas() {
 
 //Mazos solución
 
-function dom_sacaDeMazo(mazo){
+function dom_sacaDeMazo(mazo) {
     $mazos[mazo].removeChild($mazos[mazo].lastChild)
 }
 
@@ -222,6 +227,7 @@ function dom_muestraUltimaCartaPila(pila) {
     d.setAttribute("ondragend", "endDrag(event)")
     d.setAttribute("ondrop", "dropPila(event, " + pila + ")")
     d.setAttribute("ondragover", "allowDrop(event)")
+    d.setAttribute("ondblclick", "mueveAMazo(pilas[" + pila + "][pilas[" + pila + "].length - 1], " + pila + ")")
     i.setAttribute("src", pilas[pila][x].file)
 }
 
@@ -247,10 +253,12 @@ function dom_anadeAPila(pila, carta) {
     i = document.createElement("img")
     i.setAttribute("class", "imgResponsive")
     i.setAttribute("draggable", "false")
+    i.setAttribute("ondblclick", "mueveAMazo(pilas[" + pila + "][pilas[" + pila + "].length - 1], " + pila + ")")
     i.setAttribute("id", "CartaPila:" + pila + ":" + (l + 1))
     i.setAttribute("src", carta.file)
     d.appendChild(i)
     pd.setAttribute("ondrop", "return false;") // To avoid dropping in the previous "last" element
+    pd.setAttribute("ondblclick", "") //Remove prevoius double click if any
     pd.appendChild(d)
 }
 
@@ -298,6 +306,8 @@ function dom_drawMazoTemporal() {
     n.setAttribute("draggable", "true")
     n.setAttribute("ondragstart", "dragMazoT(event)")
     n.setAttribute("ondragend", "endDrag(event)")
+    //Añade evento doble click a la última carta
+    n.setAttribute("ondblclick", "mueveAMazo(mazoTemporal[mazoTemporal.length-1], 11)")
 }
 
 function dom_sacaMazoTemporal() {
@@ -307,10 +317,43 @@ function dom_sacaMazoTemporal() {
         lastCarta.setAttribute("draggable", "true")
         lastCarta.setAttribute("ondragstart", "dragMazoT(event)")
         lastCarta.setAttribute("ondragend", "endDrag(event)")
+        lastCarta.setAttribute("ondblclick", "mueveAMazo(mazoTemporal[mazoTemporal.length-1], 11)")
     }
 }
 
 //Click Events
+
+function mueveAMazo(carta, from) {
+    let m = mayGoMazo(carta)
+    if (m === undefined) return
+    if (from == 11) {
+        dom_sacaMazoTemporal()
+        mazoTemporal.pop()
+    } else { //Viene de una de las pilas
+        vaciaPila(from, 1)
+        dom_muestraUltimaCartaPila(from)
+    }
+    d = $mazos[m]
+    i = document.createElement("img")
+    i.setAttribute("class", "imgResponsive")
+    i.setAttribute("draggable", "false")
+    i.style.position = "absolute"
+    i.style.top = "0px"
+    i.style.left = "0px"
+    i.setAttribute("src", carta.file)
+    if (carta.valor != 1 && carta.valor < 13) {//Mazo completo o solo As no se pueden mover
+        i.setAttribute("draggable", "true")
+        d.setAttribute("ondragstart", "dragMazos(event, " + m + ")")
+        d.setAttribute("ondragend", "endDrag(event)")
+    }
+    d.appendChild(i)
+    mazos[m].push(carta)
+    
+    if (isFinJuego()) {
+        isPaused = true
+        window.alert("CONSEGUIDO !!!!")
+    }
+}
 
 $mazoP.addEventListener("click", function () {
     if (mazoPrincipal.numCartas > 0) {
