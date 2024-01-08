@@ -1,3 +1,4 @@
+//Testing 2
 function drag(ev) {
     ev.target.classList.add('hide');
     ev.dataTransfer.setData("text", ev.target.id);

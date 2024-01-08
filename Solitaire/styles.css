@@ -1,3 +1,8 @@
+:root {
+    --ancho-carta: calc(100vw/12);
+    --alto-carta: calc(var(--ancho-carta)*1.452)
+}
+
 body {
     font-size: large;
     font-family: Arial, Helvetica, sans-serif;
@@ -22,9 +27,9 @@ body {
 }
 
 .imgResponsive {
-    width: 100px;
-    min-width: 50px;
-    max-width: 200px;
+    width: var(--ancho-carta);
+    min-width: calc(var(--ancho-carta)/2);
+    max-width: calc(var(--ancho-carta)*2);
     height: auto;
 }
 
@@ -32,46 +37,54 @@ body {
     background-color: rgb(11, 137, 11);
     display: grid;
     grid-template-columns: auto auto auto auto auto auto auto auto auto;
-    grid-template-rows: 200px 400px;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-    width: auto;
-    min-width: 1000px;
-    height: 610px;
-    padding: 30px;
-    ;
+    grid-template-rows: var(--alto-carta) calc(var(--alto-carta)*3);
+    grid-column-gap: 0;
+    grid-row-gap: 20px;
+    width: 100vw;
+    height: 200vh;
+    padding: 0;
 }
 
 .upperrow {
-    width: 100px;
-    min-width: 50px;
-    max-width: 200px;
-    height: calc(100px * 1.452);
+    width: var(--ancho-carta);
+    min-width: calc(var(--ancho-carta)/2);
+    max-width: calc(var(--ancho-carta)*2);
+    height: var(--alto-carta);
     border-style: solid;
     border-width: 2px;
     border-color: black;
     text-align: center;
     position: relative;
+    margin-top: 10px;
 }
 
 .separator {
-    width: 100px;
-    min-width: 50px;
-    max-width: 200px;
-    height: calc(100px * 1.452);
-
+    width: var(--ancho-carta);
+    min-width: calc(var(--ancho-carta)/2);
+    max-width: calc(var(--ancho-carta)*2);
+    height: var(--alto-carta);
 }
 
 #mazoT {
     position: relative;
-    width: 100px;
-    min-width: 50px;
-    max-width: 200px;
+    width: var(--ancho-carta);
+    min-width: calc(var(--ancho-carta)/2);
+    max-width: var(--alto-carta);
+    margin-left: 10px;
+}
+
+#mazoP {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+#mazo3 {
+    margin-right: 10px;
 }
 
 .pila {
     position: relative;
-    width: 100px;
-    min-width: 50px;
-    max-width: 200px;
+    width: var(--ancho-carta);
+    min-width: calc(var(--ancho-carta)/2);
+    max-width: var(--alto-carta);
 }

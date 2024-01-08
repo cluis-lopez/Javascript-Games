@@ -6,6 +6,8 @@ var mazoTemporal = []
 var indexMazoP
 var mazos = [[],[],[],[]]
 var pilas = [[]]
+var minutos = 0
+var segundos = 0
 
 class Carta {
     palo
@@ -120,15 +122,19 @@ function sacarDelMazo(num=3){
 
 function isFinJuego(){
     for(let m in mazos){
-        if (mazos[m].length < 14)
+        if (mazos[m].length < 13)
              return false
     }
     return true
 }
 
+function newJuego(){
+    //dom_limpiaTablero()
+    mazoPrincipal = new Baraja()
+    mazoPrincipal.barajar()
+    repartir()
+    dom_dibujaPilas()
+    setInterval(dom_contador, 1000)
+}
 
-mazoPrincipal = new Baraja()
-mazoPrincipal.barajar()
-repartir()
-dom_dibujaPilas()
-console.log("barajado")
+newJuego()

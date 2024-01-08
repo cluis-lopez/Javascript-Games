@@ -3,6 +3,8 @@ const $mazoP = document.getElementById("mazoP")
 const $pilas = []
 const $mazos = []
 const $mazoT = document.getElementById("mazoT")
+const $counter = document.getElementById('counter')
+const $newGame = document.getElementById('newgame')
 
 //Initialize DOM elements
 for (let i = 0; i < 7; i++) {
@@ -13,6 +15,15 @@ for (let i = 0; i < 4; i++) {
     $mazos[i] = document.getElementById("mazo" + i)
 }
 
+//Actualiza contador
+function dom_contador() {
+    segundos++
+    if (segundos == 60) {
+        segundos = 0
+        minutos++
+    }
+    $counter.innerHTML = '<b>' + minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0') + '</b>'
+}
 
 //Drag&Drop functions
 function dragPila(ev) {
@@ -31,9 +42,17 @@ function dragPila(ev) {
 function dragMazoT(ev) {
     ev.target.classList.add('hide');
     let carta = mazoTemporal[mazoTemporal.length - 1] //La última carta del mazo
-    let data = JSON.stringify({ "size": 1, "carta": mazoTemporal[mazoTemporal.length - 1], "fromPila": 10 })
+    let data = JSON.stringify({ "size": 1, "carta": mazoTemporal[mazoTemporal.length - 1], "fromPila": 11 })
     ev.dataTransfer.setData("text/plain", data)
     console.log("Dragging from MazoT: " + data)
+}
+
+function dragMazos(ev, mazo) {
+    ev.target.classList.add('hide');
+    let carta = mazos[mazo][mazos[mazo].length - 1] //La ultima carta del mazo
+    let data = JSON.stringify({ "size:": 1, "carta": carta, "fromPila": mazo + 7 })
+    ev.dataTransfer.setData("text/plain", data)
+    console.log("Dragging from Mazos: " + data)
 }
 
 function endDrag(e) {
@@ -49,16 +68,22 @@ function dropPila(ev, pila) {
     var data = JSON.parse(ev.dataTransfer.getData("text/plain"));
     let lDestino = pilas[pila].length
     //let mainTest = pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color
-    if (data.fromPila == 10 &&
-         ((lDestino == 0 && data.carta.valor == 13) ||
-         pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color)) { //Viene desde el mazo Temporal
+    if (data.fromPila == 11 &&
+        ((lDestino == 0 && data.carta.valor == 13) ||
+            pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color)) { //Viene desde el mazo Temporal
         carta = mazoTemporal.pop()
         dom_anadeAPila(pila, carta)
         pilas[pila].push(carta)
         dom_sacaMazoTemporal()
         return
+    } else if ((data.fromPila > 6 && data.fromPila < 11) &&
+        (pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color)) {
+        carta = mazos[data.fromPila-7].pop()
+        dom_anadeAPila(pila, carta)
+        pilas[pila].push(carta)
+        dom_sacaDeMazo(data.fromPila-7)
     } else if ((lDestino == 0 && data.carta.valor == 13) ||
-         pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color) { //.. O la ultima carta de la pila destino es del mismo palo y el valor inmediatamente superior
+        pilas[pila][lDestino - 1].valor - 1 == data.carta.valor && pilas[pila][lDestino - 1].color != data.carta.color) { //.. O la ultima carta de la pila destino es del mismo palo y el valor inmediatamente superior
 
         let lOrigen = pilas[data.fromPila].length
         temp = pilas[data.fromPila].slice(lOrigen - data.size, lOrigen)
@@ -90,21 +115,47 @@ function dropMazo(ev, mazo) {
         i.style.top = "0px"
         i.style.left = "0px"
         i.setAttribute("src", data.carta.file)
+        if (data.carta.valor != 1 && data.carta.valor < 13) {//Mazo completo o solo As no se pueden mover
+            i.setAttribute("draggable", "true")
+            d.setAttribute("ondragstart", "dragMazos(event, " + mazo + ")")
+            d.setAttribute("ondragend", "endDrag(event)")
+        }
         d.appendChild(i)
-        if (data.fromPila == 10) {//Dragging from Mazo Temporal
+        if (data.fromPila == 11) {//Dragging from Mazo Temporal
             dom_sacaMazoTemporal()
             mazoTemporal.pop()
         } else { //Dragging from una de las pilas
             vaciaPila(data.fromPila, 1)
             dom_muestraUltimaCartaPila(data.fromPila)
         }
-        if (! isFinJuego()) return
+        if (!isFinJuego()) return
         else window.alert("CONSEGUIDO !!!!")
     }
     return false
 }
 
 //Inital drawings
+function dom_limpiaTablero() {
+    for (let i in $pilas) {
+        while ($pilas[i].firstChild) {
+            $pilas[i].removeChild($pilas[i].lastChild)
+        }
+    }
+
+    for (let i in $mazos) {
+        while ($mazos[i].firstChild) {
+            $mazos[i].removeChild($mazos[i].lastChild)
+        }
+    }
+
+    while ($mazoT.firstChild) {
+        $mazoT.removeChild($mazoT.lastChild)
+    }
+    dom_vaciaMazoP()
+    dom_reiniciaMazoP()
+}
+
+
 function dom_dibujaPilas() {
     pilas.forEach((e, idx1) => {
         p = $pilas[idx1]
@@ -121,7 +172,7 @@ function dom_dibujaPilas() {
                 dtop.appendChild(d)
             }
             i = document.createElement("img")
-            i.setAttribute("src", "Cartas/back.png")
+            i.setAttribute("src", "cartas/back.png")
             i.setAttribute("draggable", "false")
             i.setAttribute("class", "imgResponsive")
             i.setAttribute("id", "CartaPila:" + idx1 + ":" + idx2)
@@ -133,6 +184,12 @@ function dom_dibujaPilas() {
     $pilas.forEach((e, idx) => {
         dom_muestraUltimaCartaPila(idx)
     })
+}
+
+//Mazos solución
+
+function dom_sacaDeMazo(mazo){
+    $mazos[mazo].removeChild($mazos[mazo].lastChild)
 }
 
 //Pilas
@@ -203,13 +260,11 @@ function dom_popPila(pila) {
 }
 
 //Mazo Principal
-function dom_vaciaMazoP() {
-    $mazoP.removeChild($mazoP.firstElementChild)
-}
 
 function dom_reiniciaMazoP() {
+    $mazoP.removeChild($mazoP.firstChild)
     i = document.createElement("img")
-    i.setAttribute("src", "Cartas/back.png")
+    i.setAttribute("src", "cartas/back.png")
     i.setAttribute("class", "imgResponsive")
     i.setAttribute("draggable", "false")
     $mazoP.appendChild(i)
@@ -223,14 +278,14 @@ function dom_reiniciaMazoP() {
 
 function dom_drawMazoTemporal() {
     //Borra el mazo temporal
-    while($mazoT.firstChild) {
+    while ($mazoT.firstChild) {
         $mazoT.removeChild($mazoT.lastChild)
     }
     //Ahora pinta las tres últimas cartas del mazo temporal (si las hay)
     let count = mazoTemporal.length >= 3 ? 3 : mazoTemporal.length
-    for (let i=0; i <count ; i++) {
+    for (let i = 0; i < count; i++) {
         n = document.createElement("img")
-        n.setAttribute("src", mazoTemporal[mazoTemporal.length-count+i].file)
+        n.setAttribute("src", mazoTemporal[mazoTemporal.length - count + i].file)
         n.setAttribute("draggable", "false")
         n.setAttribute("class", "imgResponsive")
         n.setAttribute("id", "CartaMazoT:")
@@ -261,9 +316,6 @@ $mazoP.addEventListener("click", function () {
     if (mazoPrincipal.numCartas > 0) {
         sacarDelMazo()
         dom_drawMazoTemporal()
-        if (mazoPrincipal.numCartas == 0) {
-            dom_vaciaMazoP()
-        }
     } else {
         dom_reiniciaMazoP()
         let l = mazoTemporal.length
@@ -271,4 +323,8 @@ $mazoP.addEventListener("click", function () {
             mazoPrincipal.push(mazoTemporal.pop(i))
         }
     }
+})
+
+$newGame.addEventListener("click", function () {
+    //newJuego()
 })

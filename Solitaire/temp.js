@@ -1,3 +1,4 @@
+//Testing 1
 e = document.getElementById("mazoT")
 n = document.createElement("img")
 n.setAttribute("src", "Cartas/2_of_clubs.png")
