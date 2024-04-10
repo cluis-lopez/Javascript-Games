@@ -39,15 +39,6 @@
     </div>
     <div class="container text-center">
         <div class="row" id="letras_cont">
-            <div class="col">
-                <button type="button" class="btn btn-outline-dark">A</button>
-            </div>
-            <div class="col">
-                Column
-            </div>
-            <div class="col">
-                Column
-            </div>
         </div>
     </div>
 
@@ -60,36 +51,79 @@
         var palabras
         const $word_len = document.getElementById("wlen")
         const $letras_cont = document.getElementById("letras_cont")
+        const $acentos = document.getElementById("acentos")
         var wlen = parseInt($word_len.value)
-        var acentos = document.getElementById("acentos").checked
+        var acentos = $acentos.checked
+        var palabra = ""
 
         create_letras(letras_cont, wlen)
 
-        function create_letras(c, l){
+        function create_letras(c, l) {
             //remove all elements
             while (c.firstChild) {
                 c.removeChild(c.lastChild)
             }
             //Añade un elemento por cada letra
-            for (let i=0; i<l; i++){
+            for (let i = 0; i < l; i++) {
                 but = document.createElement("button")
                 but.setAttribute("type", "button")
-                but.setAttribute("id", "letra_" + (i+1))
+                but.setAttribute("id", "letra_" + i)
+                but.setAttribute("onkeydown", "tecla(event, " + i + ")")
                 but.classList.add("btn")
                 but.classList.add("btn-outline-dark")
+                but.classList.add("align-middle")
                 but.classList.add("letras")
-                but.appendChild(document.createTextNode(i+1))
+                but.appendChild(document.createTextNode(" "))
                 div = document.createElement("div")
                 div.classList.add("col")
                 div.appendChild(but)
                 c.appendChild(div)
+                palabra = palabra + "."
             }
         }
 
-        $word_len.addEventListener('change', function(){
+        function loadData(len) {
+            prefix = (len < 10 ? "0" + len : len)
+            var filename = "length/" + prefix + ".txt"
+            var reader = new FileReader()
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                return contents;
+            }
+            reader.readAsText(filename)
+        }
+
+        function tecla(e, t) {
+            if (e.which == 8) { // Pressed Delete
+                document.getElementById("letra_" + t).innerText = ""
+                palabra = palabra.replaceAt(t, ".")
+            } else {
+                pulsada = String.fromCharCode(e.which).toLowerCase()
+                if (!acentos) { //No se permiten acentos
+                    if (pulsada >= 'a' && pulsada <= 'z') {
+                        document.getElementById("letra_" + t).innerText = pulsada
+                        palabra = palabra.replaceAt(t, pulsada)
+                    }
+                }
+            }
+            console.log(palabra)
+        }
+
+        $word_len.addEventListener('change', function () {
+            palabra = ""
             wlen = parseInt($word_len.value)
             create_letras(letras_cont, wlen)
         })
+
+        String.prototype.replaceAt = function (index, replacement) {
+            return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+        }
+
+        async function decompressBlob(blob) {
+            let ds = new DecompressionStream("gzip");
+            let decompressedStream = blob.stream().pipeThrough(ds);
+            return await new Response(decompressedStream).blob();
+        }
 
     </script>
 </body>
