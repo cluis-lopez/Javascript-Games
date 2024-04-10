@@ -140,6 +140,13 @@ function isFinJuego() {
 }
 
 function newJuego() {
+    mazoPrincipal = []
+    mazoTemporal = []
+    indexMazoP
+    mazos = [[], [], [], []]
+    pilas = [[]]
+    minutos = 0
+    segundos = 0
     //dom_limpiaTablero()
     mazoPrincipal = new Baraja()
     mazoPrincipal.barajar()
