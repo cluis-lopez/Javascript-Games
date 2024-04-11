@@ -2,6 +2,7 @@
 
 <head>
     <title>Word Helper</title>
+    <meta charset="utf-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="styles.css" rel="stylesheet">
@@ -73,7 +74,7 @@
             //Update mensaje
             document.getElementById("mensaje").innerText = "El diccionario de la RAE contiene " +
                 rae_words[wlen - 1].length + " palabras de " + wlen + " letras"
-            //remove all elements
+            //remove all elements from letras
             while (c.firstChild) {
                 c.removeChild(c.lastChild)
             }
@@ -96,6 +97,10 @@
                 palabra_vacia = palabra_vacia + "."
             }
             palabra = palabra_vacia
+
+            //Vacia la tabla de resultados
+            while ($resultados.firstChild)
+                $resultados.removeChild($resultados.lastChild)
         }
 
         function tecla(e, t) {
@@ -122,7 +127,7 @@
                     }
                 } else { //Acentos permitidos
                     if (pulsada >= 'a' && pulsada <= 'z' || isAcentuada(pulsada)) {
-                        console.log("con acento " +pulsada)
+                        console.log("con acento " + pulsada)
                         document.getElementById("letra_" + t).innerText = pulsada
                         palabra_temp = palabra_temp.replaceAt(t, pulsada)
                     }
@@ -185,7 +190,7 @@
             create_letras(letras_cont, wlen)
         })
 
-        $acentos.addEventListener('change', function(){
+        $acentos.addEventListener('change', function () {
             acentos = $acentos.checked
             create_letras($letras_cont, wlen)
         })
@@ -204,9 +209,9 @@
             else
                 return false
         }
-        
-        function acentua (vocal){
-            switch (vocal){
+
+        function acentua(vocal) {
+            switch (vocal) {
                 case 'a':
                     return 'á'
                 case 'e':
