@@ -65,6 +65,7 @@
         var acentos = $acentos.checked
         var palabra = ""
         var palabra_vacia = ""
+        var previousIsAccent = false
 
         create_letras($letras_cont, wlen)
 
@@ -103,10 +104,17 @@
 
             //Gestiona la tecla pulsada y cambia las letras en pantalla
             if (e.which == 8) { // Pressed Delete
+                previousIsAccent = false
                 document.getElementById("letra_" + t).innerText = ""
                 palabra_temp = palabra_temp.replaceAt(t, ".")
+            } if (e.which == 222) { //Presionado el acento agudo
+                previousIsAccent = true
             } else {
                 pulsada = String.fromCharCode(e.which).toLowerCase()
+                if (isVocal(pulsada) && previousIsAccent)
+                    pulsada = acentua(pulsada)
+                previousIsAccent = false
+
                 if (!acentos) { //No se permiten acentos
                     if (pulsada >= 'a' && pulsada <= 'z') {
                         document.getElementById("letra_" + t).innerText = pulsada
@@ -186,6 +194,33 @@
             return this.substring(0, index) + replacement + this.substring(index + replacement.length);
         }
 
+        function isVocal(letra) {
+            if (letra === 'a' ||
+                letra === 'e' ||
+                letra === 'i' ||
+                letra === 'o' ||
+                letra === 'u')
+                return true
+            else
+                return false
+        }
+        
+        function acentua (vocal){
+            switch (vocal){
+                case 'a':
+                    return 'á'
+                case 'e':
+                    return 'é'
+                case 'i':
+                    return 'í'
+                case 'o':
+                    return 'ó'
+                case 'u':
+                    return 'ú'
+                default:
+                    return vocal
+            }
+        }
         function isAcentuada(letra) {
             if (letra === 'á' ||
                 letra === 'é' ||
