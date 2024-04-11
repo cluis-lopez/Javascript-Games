@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container m-2">
         <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand">Word Helper</a>
             <div class="form-check form-switch form-control-lg">
@@ -37,41 +37,47 @@
             </form>
         </nav>
     </div>
-    <div class="container text-center">
+    <div class="container m-2" id="cmensaje">
+        <span class="m-2" id="mensaje"></span>
+    </div>
+    <div class="container text-center m-2">
         <div class="row" id="letras_cont">
         </div>
+    </div>
+    <div class="container m-2" id="cresultado">
+        <span class="m-2" id="resultado">Resultado</span>
+        <select class="form-select m-2" multiple id="resultados">
+        </select>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-    <script src="length/05.js"></script>
+    <script src="rae.js"></script>
 
     <script>
-
-        const palabras = raeWords05
         const $word_len = document.getElementById("wlen")
         const $letras_cont = document.getElementById("letras_cont")
         const $acentos = document.getElementById("acentos")
+        const $resultados = document.getElementById("resultados")
         var wlen = parseInt($word_len.value)
         var acentos = $acentos.checked
         var palabra = ""
+        var palabra_vacia = ""
 
-        //import('length/05.js').then(({ test }) => {
-        //    palabra = 05_rae_words
-        //});
-
-        //import { 05_rae_words } from '.length/05.js'
-
-        create_letras(letras_cont, wlen)
+        create_letras($letras_cont, wlen)
 
         function create_letras(c, l) {
+            //Update mensaje
+            document.getElementById("mensaje").innerText = "El diccionario de la RAE contiene " +
+                rae_words[wlen - 1].length + " palabras de " + wlen + " letras"
             //remove all elements
             while (c.firstChild) {
                 c.removeChild(c.lastChild)
             }
             //Añade un elemento por cada letra
+            palabra_vacia = ""
             for (let i = 0; i < l; i++) {
                 but = document.createElement("button")
                 but.setAttribute("type", "button")
@@ -86,35 +92,83 @@
                 div.classList.add("col")
                 div.appendChild(but)
                 c.appendChild(div)
-                palabra = palabra + "."
+                palabra_vacia = palabra_vacia + "."
             }
-        }
-
-        function loadData(len) {
-            prefix = (len < 10 ? "0" + len : len)
-            var filename = "length/" + prefix + ".txt"
-            var reader = new FileReader()
-            reader.onload = function (e) {
-                var contents = e.target.result;
-                return contents;
-            }
-            reader.readAsText(filename)
+            palabra = palabra_vacia
         }
 
         function tecla(e, t) {
+
+            palabra_temp = palabra
+
+            //Gestiona la tecla pulsada y cambia las letras en pantalla
             if (e.which == 8) { // Pressed Delete
                 document.getElementById("letra_" + t).innerText = ""
-                palabra = palabra.replaceAt(t, ".")
+                palabra_temp = palabra_temp.replaceAt(t, ".")
             } else {
                 pulsada = String.fromCharCode(e.which).toLowerCase()
                 if (!acentos) { //No se permiten acentos
                     if (pulsada >= 'a' && pulsada <= 'z') {
                         document.getElementById("letra_" + t).innerText = pulsada
-                        palabra = palabra.replaceAt(t, pulsada)
+                        palabra_temp = palabra_temp.replaceAt(t, pulsada)
+                    }
+                } else { //Acentos permitidos
+                    if (pulsada >= 'a' && pulsada <= 'z' || isAcentuada(pulsada)) {
+                        console.log("con acento " +pulsada)
+                        document.getElementById("letra_" + t).innerText = pulsada
+                        palabra_temp = palabra_temp.replaceAt(t, pulsada)
                     }
                 }
             }
-            console.log(palabra)
+
+            // Si la palabra ha cambiado y no es vacía
+            // Construye la expresión de busqueda y busca en el diccionario
+            res = []
+            exp = ""
+            if (palabra_temp != palabra && palabra_temp != palabra_vacia) {
+                if (!acentos) { // No se permiten acentos
+                    for (let i = 0; i < palabra_temp.length; i++) {
+                        switch (palabra_temp[i]) {
+                            case 'a':
+                                exp = exp + '[a,á]'
+                                break
+                            case 'e':
+                                exp = exp + '[e,é]'
+                                break
+                            case 'i':
+                                exp = exp + '[i,í]'
+                                break
+                            case 'o':
+                                exp = exp + '[o,ó]'
+                                break
+                            case 'u':
+                                exp = exp + '[u,ú]'
+                                break
+                            default:
+                                exp = exp + palabra_temp[i]
+                        }
+                    }
+                } else { //Acentos permitidos
+                    exp = palabra_temp
+                }
+                rexp = new RegExp(exp)
+                res = rae_words[wlen - 1].filter((x) => { return rexp.exec(x) })
+            }
+
+            palabra = palabra_temp
+
+            document.getElementById("resultado").innerText = "Encontradas " + res.length +
+                " palabras con este patrón"
+
+            while ($resultados.firstChild)
+                $resultados.removeChild($resultados.lastChild)
+
+            res.forEach(element => {
+                opt = document.createElement("option")
+                opt.setAttribute("value", element)
+                opt.innerText = element
+                $resultados.appendChild(opt)
+            });
         }
 
         $word_len.addEventListener('change', function () {
@@ -123,14 +177,24 @@
             create_letras(letras_cont, wlen)
         })
 
+        $acentos.addEventListener('change', function(){
+            acentos = $acentos.checked
+            create_letras($letras_cont, wlen)
+        })
+
         String.prototype.replaceAt = function (index, replacement) {
             return this.substring(0, index) + replacement + this.substring(index + replacement.length);
         }
 
-        async function decompressBlob(blob) {
-            let ds = new DecompressionStream("gzip");
-            let decompressedStream = blob.stream().pipeThrough(ds);
-            return await new Response(decompressedStream).blob();
+        function isAcentuada(letra) {
+            if (letra === 'á' ||
+                letra === 'é' ||
+                letra === 'í' ||
+                letra === 'ó' ||
+                letra === 'ú')
+                return true
+            else
+                return false
         }
 
     </script>

@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # By: @hasecilu
 
 mkdir -pv length
@@ -15,12 +13,10 @@ do
 	then
 		echo $LINE >> ./length/0${#LINE}.txt
 	else
-		echo $LINE >> ./length/${#LINE}.txt		# time:    7.01s user    2.54s system  99% cpu     9.595 total
-		# echo $LINE | tee -a ./length/${#LINE}.txt	# time: 1263.37s user 3400.90s system 131% cpu 58:60.00  total
+		echo $LINE >> ./length/${#LINE}.txt
 	fi
 	
 	COUNTER=$((COUNTER+1))
 done
 	
 wc -l ./length/*
-

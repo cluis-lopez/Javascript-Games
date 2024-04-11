@@ -9,7 +9,7 @@
 FILES=$(find $1 -name *.txt)
 OUT=$2
 
-echo "rae_words = [" > $OUT
+echo "const rae_words = [" > $OUT
 
 for file in $FILES
 do
