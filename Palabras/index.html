@@ -46,15 +46,23 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
+    <script src="length/05.js"></script>
+
     <script>
 
-        var palabras
+        const palabras = raeWords05
         const $word_len = document.getElementById("wlen")
         const $letras_cont = document.getElementById("letras_cont")
         const $acentos = document.getElementById("acentos")
         var wlen = parseInt($word_len.value)
         var acentos = $acentos.checked
         var palabra = ""
+
+        //import('length/05.js').then(({ test }) => {
+        //    palabra = 05_rae_words
+        //});
+
+        //import { 05_rae_words } from '.length/05.js'
 
         create_letras(letras_cont, wlen)
 
