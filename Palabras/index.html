@@ -38,33 +38,33 @@
             </form>
         </nav>
     </div>
-    <div class="container m-2" id="cmensaje">
+    <div class="container m-2 mensajes" id="cmensaje">
         <span class="m-2" id="mensaje"></span>
+    </div>
+    <div class="container m-2">
+    </div>
+    <div class="container m-2 mensajes">
+        <span class="m-2">Letras Sugeridas</span>
     </div>
     <div class="container text-center m-2">
         <div class="row">
             <div class="col" id="letras_cont"></div>
         </div>
     </div>
-    <div class="container m-2" id="cmensaje">
-        <span class="m-2" id="mensaje">Letras Prohibidas</span>
+    <div class="container m-2 mensajes">
+        <span class="m-2">Letras Prohibidas</span>
     </div>
     <div class="container text-center m-2">
         <div class="row">
             <div class="col">
-                <div class="btn btn-outline-dark letras align-middle" id="lp0"></div>
-                <div class="btn btn-outline-dark letras align-middle" id="lp1"></div>
-                <div class="btn btn-outline-dark letras align-middle" id="lp2"></div>
-                <div class="btn btn-outline-dark letras align-middle" id="lp3"></div>
-                <div class="btn btn-outline-dark letras align-middle" id="lp4"></div>
-                <div class="btn btn-outline-dark letras align-middle" id="lp5"></div>
+                <input type="text" id="letrasP" class="form-control" maxlength="12" onkeyup="teclaProhibidas(event)">
             </div>
             <div class="col"></div>
             <div class="col"></div>
         </div>
     </div>
     <div class="container m-2" id="cresultado">
-        <span class="m-2" id="resultado">Resultado</span>
+        <span class="m-2" id="resultado">Palabras que se ajustan</span>
         <select class="form-select m-2" multiple id="resultados">
         </select>
     </div>
@@ -87,13 +87,13 @@
         var previousIsAccent = false
         var letrasProhibidas = []
 
-        create_letras($letras_cont, wlen)
+        createPatron($letras_cont, wlen)
 
-        function create_letras(c, l) {
+        function createPatron(c, l) {
             //Update mensaje
             document.getElementById("mensaje").innerText = "El diccionario de la RAE contiene " +
                 rae_words[wlen - 1].length + " palabras de " + wlen + " letras"
-            //remove all elements from letras
+            //remove all elements from $letras_cont
             while (c.firstChild) {
                 c.removeChild(c.lastChild)
             }
@@ -103,10 +103,9 @@
                 but = document.createElement("button")
                 but.setAttribute("type", "button")
                 but.setAttribute("id", "letra_" + i)
-                but.setAttribute("onkeydown", "tecla(event, " + i + ")")
+                but.setAttribute("onkeydown", "teclaPatron(event, " + i + ")")
                 but.classList.add("btn")
                 but.classList.add("btn-outline-dark")
-                but.classList.add("align-middle")
                 but.classList.add("letras")
                 but.appendChild(document.createTextNode(" "))
                 c.appendChild(but)
@@ -119,14 +118,13 @@
                 $resultados.removeChild($resultados.lastChild)
         }
 
-        function tecla(e, t) {
-
+        function teclaPatron(e, t) {
             palabra_temp = palabra
 
             //Gestiona la tecla pulsada y cambia las letras en pantalla
             if (e.which == 8) { // Pressed Delete
                 previousIsAccent = false
-                document.getElementById("letra_" + t).innerText = ""
+                document.getElementById("letra_" + t).innerText = " "
                 palabra_temp = palabra_temp.replaceAt(t, ".")
             } if (e.which == 222) { //Presionado el acento agudo
                 previousIsAccent = true
@@ -136,55 +134,64 @@
                     pulsada = acentua(pulsada)
                 previousIsAccent = false
 
-                if (!acentos) { //No se permiten acentos
-                    if (pulsada >= 'a' && pulsada <= 'z') {
-                        document.getElementById("letra_" + t).innerText = pulsada
-                        palabra_temp = palabra_temp.replaceAt(t, pulsada)
-                    }
-                } else { //Acentos permitidos
-                    if (pulsada >= 'a' && pulsada <= 'z' || isAcentuada(pulsada)) {
-                        document.getElementById("letra_" + t).innerText = pulsada
-                        palabra_temp = palabra_temp.replaceAt(t, pulsada)
-                    }
+                if (isLetraValida(pulsada)) {
+                    document.getElementById("letra_" + t).innerText = pulsada
+                    palabra_temp = palabra_temp.replaceAt(t, pulsada)
                 }
             }
 
             // Si la palabra ha cambiado y no es vacía
-            // Construye la expresión de busqueda y busca en el diccionario
-            res = []
-            exp = ""
+            // Realiza el filtro
+
             if (palabra_temp != palabra && palabra_temp != palabra_vacia) {
-                if (!acentos) { // No se permiten acentos
-                    for (let i = 0; i < palabra_temp.length; i++) {
-                        switch (palabra_temp[i]) {
-                            case 'a':
-                                exp = exp + '[a,á]'
-                                break
-                            case 'e':
-                                exp = exp + '[e,é]'
-                                break
-                            case 'i':
-                                exp = exp + '[i,í]'
-                                break
-                            case 'o':
-                                exp = exp + '[o,ó]'
-                                break
-                            case 'u':
-                                exp = exp + '[u,ú]'
-                                break
-                            default:
-                                exp = exp + palabra_temp[i]
-                        }
-                    }
-                } else { //Acentos permitidos
-                    exp = palabra_temp
+                palabra = palabra_temp
+                res = filtrar(palabra, letrasProhibidas)
+                updateResultados(res)
+            }
+        }
+
+        function teclaProhibidas(e) {
+            if (e.which == 8) { // Pressed Delete
+                previousIsAccent = false
+                letrasProhibidas.pop()
+            } if (e.which == 222) { //Presionado el acento agudo
+                previousIsAccent = true
+            } else {
+                char = String.fromCharCode(e.which).toLowerCase()
+                if (isVocal(char) && previousIsAccent)
+                    char = acentua(char)
+                previousIsAccent = false
+
+                s = array2String(letrasProhibidas)
+                if (isLetraValida(char)) {
+                    s = s + char
+                    letrasProhibidas = string2Array(s)
                 }
-                rexp = new RegExp(exp)
-                res = rae_words[wlen - 1].filter((x) => { return rexp.exec(x) })
+                document.getElementById("letrasP").value = s
             }
 
-            palabra = palabra_temp
+            if (palabra != palabra_vacia && letrasProhibidas.length>0){
+                res = filtrar(palabra, letrasProhibidas)
+                updateResultados(res)
+            }
+        }
 
+        $word_len.addEventListener('change', function () {
+            palabra = ""
+            wlen = parseInt($word_len.value)
+            createPatron(letras_cont, wlen)
+        })
+
+        $acentos.addEventListener('change', function () {
+            acentos = $acentos.checked
+            createPatron($letras_cont, wlen)
+        })
+
+        String.prototype.replaceAt = function (index, replacement) {
+            return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+        }
+
+        function updateResultados(res) {
             document.getElementById("resultado").innerText = "Encontradas " + res.length +
                 " palabras con este patrón"
 
@@ -199,19 +206,57 @@
             });
         }
 
-        $word_len.addEventListener('change', function () {
-            palabra = ""
-            wlen = parseInt($word_len.value)
-            create_letras(letras_cont, wlen)
-        })
+        function filtrar(palabra, letrasProhibidas) {
+            res = rae_words[wlen - 1].filter((x) => { return generateRegexp(palabra).exec(x) })
+            ret = []
+            for (let i = 0; i < res.length; i++) {
+                test = true
+                for (let j = 0; j < letrasProhibidas.length; j++) {
+                    if (res[i].indexOf(letrasProhibidas[j]) > -1) { //Contiene letra prohibida
+                        test = false;
+                    }
+                }
+                if (test)
+                    ret.push(res[i])
+            }
+            return ret
+        }
 
-        $acentos.addEventListener('change', function () {
-            acentos = $acentos.checked
-            create_letras($letras_cont, wlen)
-        })
+        function generateRegexp(palabra) {
+            exp = ""
+            if (!acentos) { //No hay acentos
+                for (let i = 0; i < palabra.length; i++) {
+                    switch (palabra[i]) {
+                        case 'a':
+                            exp = exp + '[a,á]'
+                            break
+                        case 'e':
+                            exp = exp + '[e,é]'
+                            break
+                        case 'i':
+                            exp = exp + '[i,í]'
+                            break
+                        case 'o':
+                            exp = exp + '[o,ó]'
+                            break
+                        case 'u':
+                            exp = exp + '[u,ú]'
+                            break
+                        default:
+                            exp = exp + palabra[i]
+                    }
+                }
+            } else {
+                exp = palabra
+            }
+            return new RegExp(exp)
+        }
 
-        String.prototype.replaceAt = function (index, replacement) {
-            return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+        function isLetraValida(letra) {
+            if (!acentos) // No se permiten acentos
+                return (letra >= 'a' && letra <= 'z')
+            else // acentos permitidos
+                return ((letra >= 'a' && letra <= 'z') || isAcentuada(letra))
         }
 
         function isVocal(letra) {
@@ -241,6 +286,7 @@
                     return vocal
             }
         }
+
         function isAcentuada(letra) {
             if (letra === 'á' ||
                 letra === 'é' ||
@@ -250,6 +296,19 @@
                 return true
             else
                 return false
+        }
+
+        function array2String(arr) {
+            ret = ""
+            arr.forEach((x) => { ret = ret + x })
+            return ret
+        }
+
+        function string2Array(s) {
+            ret = []
+            for (let i = 0; i < s.length; i++)
+                ret[i] = s[i]
+            return ret
         }
 
     </script>
