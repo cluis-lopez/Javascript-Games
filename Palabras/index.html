@@ -58,7 +58,7 @@
     <div class="container text-center m-2">
         <div class="row">
             <div class="col">
-                <input type="text" id="letrasP" class="form-control" maxlength="12" onkeyup="teclaProhibidas(event)">
+                <input type="text" id="letrasP" class="form-control" maxlength="12" oninput="teclaProhibidas(event)">
             </div>
             <div class="col"></div>
             <div class="col"></div>
@@ -152,13 +152,11 @@
         }
 
         function teclaProhibidas(e) {
-            if (e.which == 8) { // Pressed Delete
-                previousIsAccent = false
+            ol = letrasProhibidas.length
+            if (e.inputType === "deleteContentBackward") { // Pressed Delete
                 letrasProhibidas.pop()
-            } if (e.which == 222) { //Presionado el acento agudo
-                previousIsAccent = true
-            } else {
-                char = String.fromCharCode(e.which).toLowerCase()
+            } else if (e.inputType === "insertText") {
+                char = e.data.toLowerCase()
                 if (isVocal(char) && previousIsAccent)
                     char = acentua(char)
                 previousIsAccent = false
@@ -171,7 +169,7 @@
                 document.getElementById("letrasP").value = s
             }
 
-            if (palabra != palabra_vacia && letrasProhibidas.length>0){
+            if (palabra != palabra_vacia && letrasProhibidas.length != ol){
                 res = filtrar(palabra, letrasProhibidas)
                 updateResultados(res)
             }
