@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="container m-2">
+    <div class="container">
         <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand">Word Helper</a>
             <div class="form-check form-switch form-control-lg">
@@ -48,8 +48,12 @@
         <span class="m-2">Letras Sugeridas</span>
     </div>
     <div class="container text-center m-2">
-        <div class="row">
-            <div class="col" id="letras_cont"></div>
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-2"></div>
+            <div class="col-md-auto">
+                <div class="row" id="letras_cont"></div>
+            </div>
+            <div class="col col-lg-2"></div>
         </div>
     </div>
     <div class="container m-2 mensajes">
@@ -65,7 +69,7 @@
         </div>
     </div>
     <div class="container m-2" id="cresultado">
-        <span class="m-2" id="resultado">Palabras que se ajustan</span>
+        <span class="m-2" id="resultado">Palabras que se ajustan al patron</span>
         <select class="form-select m-2" multiple id="resultados">
         </select>
     </div>
@@ -101,15 +105,17 @@
             //Añade un elemento por cada letra
             palabra_vacia = ""
             for (let i = 0; i < l; i++) {
-                but = document.createElement("button")
-                but.setAttribute("type", "button")
-                but.setAttribute("id", "letra_" + i)
-                but.setAttribute("onkeydown", "teclaPatron(event, " + i + ")")
-                but.classList.add("btn")
-                but.classList.add("btn-outline-dark")
-                but.classList.add("letras")
-                but.appendChild(document.createTextNode(" "))
-                c.appendChild(but)
+                letraBox = document.createElement("input")
+                letraBox.setAttribute("type", "text")
+                letraBox.setAttribute("maxlength", "1")
+                letraBox.setAttribute("oninput", "teclaPatron(event, " + i + ")")
+                letraBox.setAttribute("id", "letra_" + i)
+                letraBox.classList.add("form-control")
+                letraBox.classList.add("letras")
+                col = document.createElement("div")
+                col.classList.add("col")
+                col.appendChild(letraBox)
+                c.appendChild(col)
                 palabra_vacia = palabra_vacia + "."
             }
             palabra = palabra_vacia
@@ -122,33 +128,31 @@
         function teclaPatron(e, t) {
             palabra_temp = palabra
 
-            //Gestiona la tecla pulsada y cambia las letras en pantalla
-            if (e.which == 8) { // Pressed Delete
-                previousIsAccent = false
-                document.getElementById("letra_" + t).innerText = " "
+            if (e.inputType === "deleteContentBackward") { // Pressed Delete
+                document.getElementById("letra_" + t).value = ""
                 palabra_temp = palabra_temp.replaceAt(t, ".")
-            } if (e.which == 222) { //Presionado el acento agudo
-                previousIsAccent = true
-            } else {
-                pulsada = String.fromCharCode(e.which).toLowerCase()
-                if (isVocal(pulsada) && previousIsAccent)
-                    pulsada = acentua(pulsada)
-                previousIsAccent = false
-
-                if (isLetraValida(pulsada)) {
-                    document.getElementById("letra_" + t).innerText = pulsada
-                    palabra_temp = palabra_temp.replaceAt(t, pulsada)
+            } else if (e.inputType ==="insertText") {
+                char = e.data.toLowerCase()
+                if (isLetraValida(char)) {
+                    document.getElementById("letra_" + t).value = char
+                    palabra_temp = palabra_temp.replaceAt(t, char)
+                } else {
+                    document.getElementById("letra_" + t).value = ""
                 }
             }
 
-            // Si la palabra ha cambiado y no es vacía
+            // Si la palabra ha cambiado
             // Realiza el filtro
-
-            if (palabra_temp != palabra && palabra_temp != palabra_vacia) {
-                palabra = palabra_temp
-                res = filtrar(palabra, letrasProhibidas)
+            if (palabra_temp == palabra_vacia){ //Vacia resultados
+                while ($resultados.firstChild)
+                $resultados.removeChild($resultados.lastChild)
+                document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
+            } else if (palabra_temp != palabra) {
+                res = filtrar(palabra_temp, letrasProhibidas)
                 updateResultados(res)
             }
+
+            palabra = palabra_temp
         }
 
         function teclaProhibidas(e) {
@@ -157,9 +161,6 @@
                 letrasProhibidas.pop()
             } else if (e.inputType === "insertText") {
                 char = e.data.toLowerCase()
-                if (isVocal(char) && previousIsAccent)
-                    char = acentua(char)
-                previousIsAccent = false
 
                 s = array2String(letrasProhibidas)
                 if (isLetraValida(char)) {
@@ -169,7 +170,7 @@
                 document.getElementById("letrasP").value = s
             }
 
-            if (palabra != palabra_vacia && letrasProhibidas.length != ol){
+            if (palabra != palabra_vacia && letrasProhibidas.length != ol) {
                 res = filtrar(palabra, letrasProhibidas)
                 updateResultados(res)
             }
