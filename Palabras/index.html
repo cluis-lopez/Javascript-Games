@@ -12,7 +12,9 @@
 <body>
     <div class="container">
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand">Word Helper</a>
+            <a class="navbar-brand">
+                <img src="logo.png" alt="logo" width="150">
+            </a>
             <div class="form-check form-switch form-control-lg">
                 <input class="form-check-input" type="checkbox" role="switch" id="acentos">
                 <label class="form-check-label" for="acentos">Usar acentos</label>
@@ -91,6 +93,7 @@
         var palabra_vacia = ""
         var previousIsAccent = false
         var letrasProhibidas = []
+        var isPreviousTilde = false
 
         createPatron($letras_cont, wlen)
 
@@ -125,13 +128,19 @@
                 $resultados.removeChild($resultados.lastChild)
         }
 
+        var debug = []
+        var count = 0
+
         function teclaPatron(e, t) {
             palabra_temp = palabra
+
+            debug[count] = e
+            count = count + 1
 
             if (e.inputType === "deleteContentBackward") { // Pressed Delete
                 document.getElementById("letra_" + t).value = ""
                 palabra_temp = palabra_temp.replaceAt(t, ".")
-            } else if (e.inputType ==="insertText") {
+            } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
                 char = e.data.toLowerCase()
                 if (isLetraValida(char)) {
                     document.getElementById("letra_" + t).value = char
@@ -143,9 +152,9 @@
 
             // Si la palabra ha cambiado
             // Realiza el filtro
-            if (palabra_temp == palabra_vacia){ //Vacia resultados
+            if (palabra_temp == palabra_vacia) { //Vacia resultados
                 while ($resultados.firstChild)
-                $resultados.removeChild($resultados.lastChild)
+                    $resultados.removeChild($resultados.lastChild)
                 document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
             } else if (palabra_temp != palabra) {
                 res = filtrar(palabra_temp, letrasProhibidas)
@@ -159,7 +168,7 @@
             ol = letrasProhibidas.length
             if (e.inputType === "deleteContentBackward") { // Pressed Delete
                 letrasProhibidas.pop()
-            } else if (e.inputType === "insertText") {
+            } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
                 char = e.data.toLowerCase()
 
                 s = array2String(letrasProhibidas)
@@ -170,7 +179,7 @@
                 document.getElementById("letrasP").value = s
             }
 
-            if (palabra != palabra_vacia && letrasProhibidas.length != ol) {
+            if (letrasProhibidas.length != ol) {
                 res = filtrar(palabra, letrasProhibidas)
                 updateResultados(res)
             }
@@ -211,11 +220,26 @@
             ret = []
             for (let i = 0; i < res.length; i++) {
                 test = true
-                for (let j = 0; j < letrasProhibidas.length; j++) {
-                    if (res[i].indexOf(letrasProhibidas[j]) > -1) { //Contiene letra prohibida
-                        test = false;
+
+                lp = ""
+                if (!acentos) {
+                    for (let j = 0; j < letrasProhibidas.length; j++) {
+                        if (isVocal(letrasProhibidas[j]))
+                            lp = lp + letrasProhibidas[j] + acentua(letrasProhibidas[j])
+                        else
+                            lp = lp + letrasProhibidas[j]
+                    }
+                } else {
+                    lp = letrasProhibidas
+                }
+
+                for (let j = 0; j < lp.length; j++) {
+                    if (res[i].indexOf(lp[j]) > -1) { //Contiene letra prohibida
+                        test = false
+                        break
                     }
                 }
+
                 if (test)
                     ret.push(res[i])
             }
