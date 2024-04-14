@@ -19,3 +19,7 @@
     background-color: rgb(225, 224, 224);
     font-weight: bold;
 }
+
+#resultados {
+    font-size: large;
+}
