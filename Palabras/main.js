@@ -99,7 +99,7 @@ function teclaProhibidas(e) {
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         char = e.data.toLowerCase()
         if (isLetraValida(char)) {
-            if (letrasPresentes.indexOf(char) > -1) { //La letra ya esta entre las presentes
+            if (letrasPresentes.indexOf(char) > -1 || palabra.indexOf(char) > -1) { //La letra ya esta entre las presentes
                 document.getElementById("warningMensaje").innerText = "La letra ya esta entre las obligatorias de la palabra"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
@@ -110,7 +110,7 @@ function teclaProhibidas(e) {
         document.getElementById("letrasP").value = array2String(letrasProhibidas)
     }
 
-    if (palabra_temp == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
+    if (palabra == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
         while ($resultados.firstChild)
             $resultados.removeChild($resultados.lastChild)
         document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
@@ -139,7 +139,7 @@ function teclaPresentes(e) {
         document.getElementById("letrasOK").value = array2String(letrasPresentes)
     }
 
-    if (palabra_temp == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
+    if (palabra == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
         while ($resultados.firstChild)
             $resultados.removeChild($resultados.lastChild)
         document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
