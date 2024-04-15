@@ -106,15 +106,58 @@
                     <img src="logo.png" alt="logo" width="150">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <h4>&copy C. L. López 2024</h4><br><br>
-                    <a href="https://github.com/cluis-lopez/Javascript-Games/tree/main/Palabras">
-                        <h4 class="bi bi-github"> El código en Github</h4>
-                    </a>
-                    <a href="https://www.linkedin.com/in/carlos-lopez-25977223">
-                        <h4 class="bi bi-linkedin"> El menda en Linkedin</h4>
-                    </a>
+
+                <div class="modal-body">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="about">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#about" aria-expanded="true" aria-controls="about">
+                                    About
+                                </button>
+                            </h2>
+                            <div id="about" class="accordion-collapse collapse show" aria-labelledby="about"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body text-center">
+                                    <img src="Menda.jpg" class="rounded-circle" width="150px"><br><br>
+                                    <h4>&copy C. L. López 2024</h4><br><br>
+                                    <a href="https://github.com/cluis-lopez/Javascript-Games/tree/main/Palabras">
+                                        <h4 class="bi bi-github"> El código en Github</h4>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/carlos-lopez-25977223">
+                                        <h4 class="bi bi-linkedin"> El menda en Linkedin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="help">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#help" aria-expanded="false" aria-controls="collapseTwo">
+                                    Ayuda
+                                </button>
+                            </h2>
+                            <div id="help" class="accordion-collapse collapse" aria-labelledby="help"
+                                data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <img src="Ejemplo_1.png" alt="logo" width="350">
+                                    <p>El uso es muy sencillo.<br>
+                                        En un ejemplo como el de arriba, las letras "r", "d" y "o" tienen la posición
+                                        fijada y en la aplicación se dejarán en las casillas correspondientes.<br>
+                                        También sabemos que la ltrea "a" esta presente, aunque no conocemos su posición
+                                        y que la letra "i" no está presente. Así pues ponemos cada una de estas letras
+                                        en el apartado correspondiente tal como muestra la imagen inferior
+                                    </p>
+                                    <img src="Captura_2.png" alt="logo" width="350">
+                                    <p>En el cuadro inferior nos aparecen las posibles palabras del diccionario que
+                                        encajan con dicho patrón
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
