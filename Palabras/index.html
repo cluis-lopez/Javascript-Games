@@ -42,55 +42,59 @@
             </form>
         </nav>
     </div>
-    <div class="container m-2 mensajes" id="cmensaje">
-        <span class="m-2" id="mensaje"></span>
-    </div>
-    <div class="container m-2">
-    </div>
-    <div class="container m-2 mensajes">
-        <span class="m-2">Letras Sugeridas</span>
-    </div>
-    <div class="container text-center m-2">
-        <div class="row justify-content-md-center">
-            <div class="col col-lg-2"></div>
-            <div class="col-md-auto">
-                <div class="row" id="letras_cont"></div>
-            </div>
-            <div class="col col-lg-2"></div>
+    <div class="container mt-2">
+        <div class="container mensajes" id="cmensaje">
+            <span id="mensaje"></span>
         </div>
-    </div>
-    <div class="container m-2 mensajes">
-        <span class="m-2">Letras Presentes</span>
-    </div>
-    <div class="container text-center m-2">
-        <div class="row">
-            <div class="col">
-                <input type="text" id="letrasOK" class="form-control letrasP" maxlength="16"
-                    oninput="teclaPresentes(event)">
-            </div>
-            <div class="col"></div>
-            <div class="col"></div>
+        <div class="container mt-2">
         </div>
-    </div>
-    <div class="container m-2 mensajes">
-        <span class="m-2">Letras Prohibidas</span>
-    </div>
-    <div class="container text-center m-2">
-        <div class="row">
-            <div class="col">
-                <input type="text" id="letrasP" class="form-control letrasP" maxlength="16"
-                    oninput="teclaProhibidas(event)">
-            </div>
-            <div class="col"></div>
-            <div class="col"></div>
+        <div class="container mensajes">
+            <span>Letras Presentes en la posición</span>
         </div>
-    </div>
-    <div class="container m-2 mensajes">
-        <span class="m-2" id="resultado">Palabras que se ajustan al patron</span>
-    </div>
-    <div class="container m-2" id="cresultado">
-        <select class="form-select m-2" multiple id="resultados">
-        </select>
+        <div class="container text-center mt-2">
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-2"></div>
+                <div class="col-md-auto">
+                    <div class="row" id="letras_cont"></div>
+                </div>
+                <div class="col col-lg-2"></div>
+            </div>
+        </div>
+        <div class="container mensajes mt-4">
+            <span>Letras Presentes en cualquier posición</span>
+        </div>
+        <div class="container text-center mt-2">
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="letrasOK" class="form-control letrasP" maxlength="16"
+                        oninput="teclaPresentes(event)">
+                </div>
+                <div class="col"></div>
+                <div class="col"></div>
+            </div>
+        </div>
+        <div class="container mensajes mt-4">
+            <span>Letras Prohibidas</span>
+        </div>
+        <div class="container text-center mt-2">
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="letrasP" class="form-control letrasP" maxlength="16"
+                        oninput="teclaProhibidas(event)">
+                </div>
+                <div class="col"></div>
+                <div class="col"></div>
+            </div>
+        </div>
+        <div class="container mensajes mt-4">
+            <span id="resultado">Palabras que se ajustan al patron</span>
+        </div>
+        <div class="container mt-2" id="cresultado">
+            <div class="overflow-y-auto h-100 d-inline-block w-100 p-3">
+                <ul class="list-group" multiple id="resultados">
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Modals -->

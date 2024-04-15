@@ -177,8 +177,8 @@ function updateResultados(res) {
         $resultados.removeChild($resultados.lastChild)
 
     res.forEach(element => {
-        opt = document.createElement("option")
-        opt.setAttribute("value", element)
+        opt = document.createElement("li")
+        opt.classList.add("list-group-item")
         opt.innerText = element
         $resultados.appendChild(opt)
     });
