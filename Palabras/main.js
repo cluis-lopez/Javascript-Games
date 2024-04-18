@@ -1,175 +1,194 @@
+const FILAS_LETRAS_OK = 4
 const $word_len = document.getElementById("wlen")
-const $letras_cont = document.getElementById("letras_cont")
 const $acentos = document.getElementById("acentos")
 const $resultados = document.getElementById("resultados")
 var wlen = parseInt($word_len.value)
 var acentos = $acentos.checked
-var palabra = ""
-var palabra_vacia = ""
-var letrasProhibidas = []
-var letrasPresentes = []
+var letras_OKOK = [] // Letras correctas en posicion correcta
+var letras_OK = [[]] // Letras correctas en posicion incorrecta
+var letras_Prohibidas = [] // Letras prohibidas
 
-createPatron($letras_cont, wlen)
-
+createPatron()
 
 modal = new bootstrap.Modal(document.getElementById('introModal'), { keyboard: false })
 modal.show()
 
-
-
-function createPatron(c, l) {
+function createPatron() {
+    var l_OKOK = document.getElementById("letras_OKOK")
+    var l_OK = document.getElementById("letras_OK")
     //Update mensaje
     document.getElementById("mensaje").innerText = "El diccionario de la RAE contiene " +
         rae_words[wlen - 1].length + " palabras de " + wlen + " letras"
-    //remove all elements from $letras_cont
-    while (c.firstChild) {
-        c.removeChild(c.lastChild)
+    //Borra todos los elementos de letras_OKOK y Letras_OK
+    while (l_OKOK.firstChild) {
+        l_OKOK.removeChild(l_OKOK.lastChild)
     }
-    //Añade un elemento por cada letra
-    palabra_vacia = ""
-    for (let i = 0; i < l; i++) {
-        letraBox = document.createElement("input")
-        letraBox.setAttribute("type", "text")
-        letraBox.setAttribute("maxlength", "1")
-        letraBox.setAttribute("oninput", "teclaPatron(event, " + i + ")")
-        letraBox.setAttribute("id", "letra_" + i)
-        letraBox.classList.add("form-control")
-        letraBox.classList.add("letras")
-        col = document.createElement("div")
-        col.classList.add("col")
-        col.appendChild(letraBox)
-        c.appendChild(col)
-        palabra_vacia = palabra_vacia + "."
+    while (l_OK.firstChild) {
+        l_OK.removeChild(l_OK.lastChild)
     }
-    palabra = palabra_vacia
+
+    //Inicializa las variables
+    letras_OKOK = Array(wlen).fill("")
+    letras_Prohibidas = []
+
+    inputBox(l_OKOK, wlen, "letra_OKOK", "teclaOKOK", 0)
+
+    for (let i = 0; i < FILAS_LETRAS_OK; i++) {
+        letras_OK[i] = Array(wlen).fill("")
+        var row = document.createElement("div")
+        row.classList.add("row")
+        row.classList.add("justify-content-md-center")
+        var col_sep = document.createElement("div")
+        col_sep.classList.add("col")
+        col_sep.classList.add("col-lg-2")
+        var col_content = document.createElement("div")
+        col_content.classList.add("col-md-auto")
+        var row_content = document.createElement("div")
+        row_content.classList.add("row")
+        row_content.setAttribute("id", "letras_OK_fila_" + i)
+        inputBox(row_content, wlen, "letra_OK_fila_" + i, "teclaOK", i)
+        var col_sep2 = document.createElement("div")
+        col_sep2.classList.add("col")
+        col_sep2.classList.add("col-lg-2")
+        col_content.appendChild(row_content)
+        row.appendChild(col_sep)
+        row.appendChild(col_content)
+        row.appendChild(col_sep2)
+        l_OK.appendChild(row)
+        var row_sep = document.createElement("div")
+        row_sep.classList.add("row")
+        var col_sep3 = document.createElement("div")
+        col_sep3.classList.add("col")
+        col_sep3.classList.add("mt-2")
+        row_sep.appendChild(col_sep3)
+        l_OK.appendChild(row_sep)
+    }
 
     //Vacia la tabla de resultados
     while ($resultados.firstChild)
         $resultados.removeChild($resultados.lastChild)
     //Actualiza los string de letras presentes y prohibidas
-    document.getElementById("letrasP").value = array2String(letrasProhibidas)
-    document.getElementById("letrasOK").value = array2String(letrasPresentes)
+    document.getElementById("letrasP").value = array2String(letras_Prohibidas)
+
+    function inputBox(cont, l, id, callbck, fila) {
+        for (let i = 0; i < l; i++) {
+            var letraBox = document.createElement("input")
+            letraBox.setAttribute("type", "text")
+            letraBox.setAttribute("maxlength", "1")
+            letraBox.setAttribute("oninput", callbck + "(event, " + fila + ", " + i + ")")
+            letraBox.setAttribute("id", id + "_" + i)
+            letraBox.classList.add("form-control")
+            letraBox.classList.add("letras")
+            var col = document.createElement("div")
+            col.classList.add("col")
+            col.appendChild(letraBox)
+            cont.appendChild(col)
+        }
+    }
 }
 
-function teclaPatron(e, t) {
-    palabra_temp = palabra
-
+function teclaOKOK(e, fila, t) {
     if (e.inputType === "deleteContentBackward") { // Pressed Delete
-        document.getElementById("letra_" + t).value = ""
-        palabra_temp = palabra_temp.replaceAt(t, ".")
+        document.getElementById("letra_OKOK_" + t).value = ""
+        document.getElementById("letra_OKOK_" + t).style.backgroundColor = ""
+        letras_OKOK[t] = ""
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
-        char = e.data.toLowerCase()
+        var char = e.data.toLowerCase()
         if (isLetraValida(char)) {
-            if (letrasProhibidas.indexOf(char) <= -1) {
-                document.getElementById("letra_" + t).value = char
-                palabra_temp = palabra_temp.replaceAt(t, char)
+            if (letras_Prohibidas.indexOf(char) <= -1) {
+                document.getElementById("letra_OKOK_" + t).value = char
+                document.getElementById("letra_OKOK_" + t).style.backgroundColor = "lightgreen"
+                letras_OKOK[t] = char
             } else {
-                document.getElementById("letra_" + t).value = ""
+                document.getElementById("letra_OKOK_" + t).value = ""
+                document.getElementById("warningMensaje").innerText = "Has usado una letra que está en la lista de letras prohibidas"
+                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
+                modal.show()
+            }
+        } else {
+            document.getElementById("letra_OKOK_" + t).value = ""
+        }
+    } else {
+        document.getElementById("letra_OKOK_" + t).value = ""
+    }
+
+    updateResultados()
+}
+
+function teclaOK(e, fila, t) {
+    if (e.inputType === "deleteContentBackward") { // Pressed Delete
+        document.getElementById("letra_OK_fila_" + fila + "_" + t).value = ""
+        document.getElementById("letra_OK_fila_" + fila + "_" + t).style.backgroundColor = ""
+        letras_OK[fila][t] = ""
+    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
+        var char = e.data.toLowerCase()
+        if (isLetraValida(char)) {
+            if (letras_Prohibidas.indexOf(char) <= -1) {
+                document.getElementById("letra_OK_fila_" + fila + "_" + t).value = char
+                document.getElementById("letra_OK_fila_" + fila + "_" + t).style.backgroundColor = "orange"
+                letras_OK[fila][t] = char
+            } else {
+                document.getElementById("letra_OK_fila_" + fila + "_" + t).value = ""
                 document.getElementById("warningMensaje").innerText = "Has usado una letra que está; en la lista de letras prohibidas"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
             }
         } else {
-            document.getElementById("letra_" + t).value = ""
+            document.getElementById("letra_OK_fila_" + fila + "_" + t).value = ""
         }
     } else {
-        document.getElementById("letra_" + t).value = ""
+        document.getElementById("letra_OK_fila_" + fila + "_" + t).value = ""
     }
 
-
-
-    // Si la palabra ha cambiado
-    // Realiza el filtro
-    if (palabra_temp == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
-        while ($resultados.firstChild)
-            $resultados.removeChild($resultados.lastChild)
-        document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
-    } else if (palabra_temp != palabra) {
-        res = filtrar(palabra_temp, letrasProhibidas, letrasPresentes)
-        updateResultados(res)
-    }
-
-    palabra = palabra_temp
+    updateResultados()
 }
 
 function teclaProhibidas(e) {
-    ol = letrasProhibidas.length
     if (e.inputType === "deleteContentBackward") { // Pressed Delete
-        letrasProhibidas.pop()
+        letras_Prohibidas.pop()
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
-        char = e.data.toLowerCase()
+        var char = e.data.toLowerCase()
         if (isLetraValida(char)) {
-            if (letrasPresentes.indexOf(char) > -1 || palabra.indexOf(char) > -1) { //La letra ya esta entre las presentes
-                document.getElementById("warningMensaje").innerText = "La letra ya esta entre las obligatorias de la palabra"
+            if (multiArrayContains(letras_OK, char) || letras_OKOK.indexOf(char) > -1) { //La letra ya esta entre las presentes
+                document.getElementById("warningMensaje").innerText = "La letra ya esta entre las necesarias de la palabra"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
             } else {
-                letrasProhibidas.push(char)
+                letras_Prohibidas.push(char)
             }
         }
-        document.getElementById("letrasP").value = array2String(letrasProhibidas)
+        document.getElementById("letrasP").value = array2String(letras_Prohibidas)
     }
-
-    if (palabra == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
-        while ($resultados.firstChild)
-            $resultados.removeChild($resultados.lastChild)
-        document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
-    } else if (letrasProhibidas.length != ol) {
-        res = filtrar(palabra, letrasProhibidas, letrasPresentes)
-        updateResultados(res)
-    }
-}
-
-function teclaPresentes(e) {
-    ol = letrasPresentes.length
-    if (e.inputType === "deleteContentBackward") { // Pressed Delete
-        letrasPresentes.pop()
-    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
-        char = e.data.toLowerCase()
-
-        if (isLetraValida(char)) {
-            if (letrasProhibidas.indexOf(char) > -1) { //La letra ya esta entre las prohibidas
-                document.getElementById("warningMensaje").innerText = "La letra ya está entre las prohibidas en la pablabra"
-                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
-                modal.show()
-            } else {
-                letrasPresentes.push(char)
-            }
-        }
-        document.getElementById("letrasOK").value = array2String(letrasPresentes)
-    }
-
-    if (palabra == palabra_vacia && letrasPresentes.length == 0 && letrasProhibidas.length == 0) { //Vacia resultados
-        while ($resultados.firstChild)
-            $resultados.removeChild($resultados.lastChild)
-        document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
-    } else if (letrasPresentes.length != ol) {
-        res = filtrar(palabra, letrasProhibidas, letrasPresentes)
-        updateResultados(res)
-    }
+    updateResultados()
 }
 
 $word_len.addEventListener('change', function () {
-    palabra = ""
-    letrasPresentes = []
+    letrasOKOK = []
+    letrasOK = [[]]
     letrasProhibidas = []
     wlen = parseInt($word_len.value)
-    createPatron(letras_cont, wlen)
+    createPatron()
 })
 
 $acentos.addEventListener('change', function () {
     acentos = $acentos.checked
-    palabra = ""
-    letrasPresentes = []
+    letrasOKOK = []
+    letrasOK = [[]]
     letrasProhibidas = []
-    createPatron($letras_cont, wlen)
+    createPatron()
 })
 
-String.prototype.replaceAt = function (index, replacement) {
-    return this.substring(0, index) + replacement + this.substring(index + replacement.length);
-}
+function updateResultados() {
+    if (isArrayEmpty(letras_OKOK) && isArrayEmpty(letras_OK) && letras_Prohibidas.length == 0) {
+        //Vacia la tabla de resultados
+        while ($resultados.firstChild)
+            $resultados.removeChild($resultados.lastChild)
+        document.getElementById("resultado").innerText = "Palabras que se ajustan al patron"
+        return
+    }
 
-function updateResultados(res) {
+    var res = filtrar()
+
     document.getElementById("resultado").innerText = "Encontradas " + res.length +
         " palabras con este patrón"
 
@@ -177,43 +196,72 @@ function updateResultados(res) {
         $resultados.removeChild($resultados.lastChild)
 
     res.forEach(element => {
-        opt = document.createElement("li")
+        var opt = document.createElement("li")
         opt.classList.add("list-group-item")
-        opt.innerText = element
+        opt.classList.add("d-flex")
+        opt.classList.add("justify-content-between")
+        opt.classList.add("align-items-center")
+        opt.innerText = element["palabra"]
+        var ra = document.createElement("span")
+        ra.classList.add("badge")
+        ra.classList.add("text-bg-dark")
+        ra.classList.add("badge-pill")
+        ra.innerText = element["rank"]
+        opt.appendChild(ra)
         $resultados.appendChild(opt)
     });
 }
 
-function filtrar(palabra, letrasProhibidas, letrasPresentes) {
-    res = rae_words[wlen - 1].filter((x) => { return generateRegexp(palabra).exec(x) })
-    ret = []
-    for (let i = 0; i < res.length; i++) {
-        test = true
+function filtrar() {
+    var results1 = []
 
-        temp = filtroAcentos(letrasProhibidas)
-        for (let j = 0; j < temp.length; j++) {
-            if (res[i].indexOf(temp[j]) > -1) { //Contiene letra prohibida
-                test = false
-                break
+    var rx = generateRegexp(letras_OKOK)
+    rae_words[wlen - 1].forEach((x, i) => {
+        if (x.match(rx)) {
+            t = {}
+            t["palabra"] = x
+            t["rank"] = rae_words_rankings[wlen - 1][i]
+            results1.push(t)
+        }
+    })
+
+    var results2 = []
+    rx = new RegExp('^[^' + filtroAcentos(letras_Prohibidas) + ']*$') //expresion para eliminar letras prohibidas de la lista
+    results1.forEach(x => {
+        if (x["palabra"].match(rx)) {
+            results2.push(x)
+        }
+    })
+
+    var reto = []
+
+    for (let i = 0; i < results2.length; i++) {
+        var test = true
+        var temp = quitaAcentos(results2[i]["palabra"])
+        loop1:
+        for (let j = 0; j < FILAS_LETRAS_OK; j++) { //Recorremos cada fila de letras en posicion incorrecta
+            for (let k = 0; k < letras_OK[j].length; k++) {
+                if (letras_OK[j][k] === '') {
+                    //console.log("Letra vacía: linea: " + j + " columna: " + k)
+                    continue
+                }
+                let indxs = stringAllIndexOf(temp, letras_OK[j][k])
+                if (indxs.length == 0 || indxs.indexOf(k) > -1) { //La letra no está en la palabra o está en la posición
+                    test = false
+                    break loop1
+                }
             }
         }
 
-        temp = quitaAcentos(res[i])
-        for (let j = 0; j < letrasPresentes.length; j++) {
-            if (temp.indexOf(letrasPresentes[j]) < 0) { //No contiene una letra obligatoria
-                test = false
-                break
-            }
+        if (test) {
+            reto.push(results2[i])
         }
-
-        if (test)
-            ret.push(res[i])
     }
-    return ret.sort()
+    return reto.sort((a, b) => (b.rank) - (a.rank))
 }
 
 function filtroAcentos(s) {
-    temp = ""
+    var temp = ""
     if (!acentos) {
         for (let i = 0; i < s.length; i++) {
             if (isVocal(s[i]))
@@ -228,7 +276,7 @@ function filtroAcentos(s) {
 }
 
 function quitaAcentos(s) {
-    temp = ""
+    var temp = ""
     if (!acentos) {
         for (let i = 0; i < s.length; i++) {
             if (isAcentuada(s[i]))
@@ -243,8 +291,11 @@ function quitaAcentos(s) {
 }
 
 
-function generateRegexp(palabra) {
-    exp = ""
+function generateRegexp() {
+    var temp = []
+    letras_OKOK.forEach(x => { if (x === '') { temp.push('.') } else { temp.push(x) } })
+    palabra = array2String(temp)
+    var exp = ""
     if (!acentos) { //No hay acentos
         for (let i = 0; i < palabra.length; i++) {
             switch (palabra[i]) {
@@ -337,14 +388,49 @@ function desacentua(vocal) {
 }
 
 function array2String(arr) {
-    ret = ""
+    var ret = ""
     arr.forEach((x) => { ret = ret + x })
     return ret
 }
 
 function string2Array(s) {
-    ret = []
+    var ret = []
     for (let i = 0; i < s.length; i++)
         ret[i] = s[i]
+    return ret
+}
+
+function multiArrayContains(array, val) {
+    var ret = false
+    array.forEach(x =>
+        x.forEach(y => {
+            if (y == val)
+                ret = true
+        })
+    )
+    return ret
+}
+
+function isArrayEmpty(array) {
+    if (array[0].constructor === Array) { //Bidimensional
+        var ret = true
+        array.forEach(x => {
+            if (x.every(y => y == ''))
+                ret = true && ret
+            else
+                ret = false
+        })
+    } else {
+        ret = array.every(x => x == '')
+    }
+    return ret
+}
+
+function stringAllIndexOf(string, char) {
+    var ret = []
+    for (let i = 0; i < string.length; i++) {
+        if (string[i] === char)
+            ret.push(i)
+    }
     return ret
 }

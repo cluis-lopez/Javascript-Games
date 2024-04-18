@@ -49,30 +49,26 @@
         <div class="container mt-2">
         </div>
         <div class="container mensajes">
-            <span>Letras Presentes en la posición</span>
+            <span>Letras Presentes en la posición correcta</span>
         </div>
         <div class="container text-center mt-2">
             <div class="row justify-content-md-center">
                 <div class="col col-lg-2"></div>
                 <div class="col-md-auto">
-                    <div class="row" id="letras_cont"></div>
+                    <div class="row" id="letras_OKOK"></div>
                 </div>
                 <div class="col col-lg-2"></div>
             </div>
         </div>
+
         <div class="container mensajes mt-4">
-            <span>Letras Presentes en cualquier posición</span>
+            <span>Letras Presentes en la posición incorrecta</span>
         </div>
         <div class="container text-center mt-2">
-            <div class="row">
-                <div class="col">
-                    <input type="text" id="letrasOK" class="form-control letrasP" maxlength="16"
-                        oninput="teclaPresentes(event)">
-                </div>
-                <div class="col"></div>
-                <div class="col"></div>
+            <div class="row justify-content-md-center" id="letras_OK">
             </div>
         </div>
+
         <div class="container mensajes mt-4">
             <span>Letras Prohibidas</span>
         </div>
@@ -82,12 +78,17 @@
                     <input type="text" id="letrasP" class="form-control letrasP" maxlength="16"
                         oninput="teclaProhibidas(event)">
                 </div>
-                <div class="col"></div>
-                <div class="col"></div>
             </div>
         </div>
         <div class="container mensajes mt-4">
             <span id="resultado">Palabras que se ajustan al patron</span>
+        </div>
+        <div class="container mt-1">
+            <div class="row">
+                <div class="col text-center"><b>Palabra</b></div>
+                <div class="col"></div>
+                <div class="col text-center"><b>Ranking</b></div>
+            </div>
         </div>
         <div class="container mt-2" id="cresultado">
             <div class="overflow-y-auto h-100 d-inline-block w-100 p-3">
@@ -189,6 +190,7 @@
         crossorigin="anonymous"></script>
 
     <script src="rae.js"></script>
+    <script src="rankings.js"></script>
     <script src="main.js"></script>
 </body>
 
