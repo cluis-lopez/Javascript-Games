@@ -214,7 +214,6 @@ function updateResultados() {
 
 function filtrar() {
     var results1 = []
-
     var rx = generateRegexp(letras_OKOK)
     rae_words[wlen - 1].forEach((x, i) => {
         if (x.match(rx)) {
@@ -233,7 +232,7 @@ function filtrar() {
         }
     })
 
-    var reto = []
+    var results3 = []
 
     for (let i = 0; i < results2.length; i++) {
         var test = true
@@ -254,10 +253,10 @@ function filtrar() {
         }
 
         if (test) {
-            reto.push(results2[i])
+            results3.push(results2[i])
         }
     }
-    return reto.sort((a, b) => (b.rank) - (a.rank))
+    return results3.sort((a, b) => (b.rank) - (a.rank))
 }
 
 function filtroAcentos(s) {
