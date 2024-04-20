@@ -2,8 +2,10 @@ const FILAS_LETRAS_OK = 4
 const $word_len = document.getElementById("wlen")
 const $acentos = document.getElementById("acentos")
 const $resultados = document.getElementById("resultados")
+const $soloAcentos = document.getElementById("soloAcentos")
 var wlen = parseInt($word_len.value)
 var acentos = $acentos.checked
+var soloAcentos = $soloAcentos.checked
 var letras_OKOK = [] // Letras correctas en posicion correcta
 var letras_OK = [[]] // Letras correctas en posicion incorrecta
 var letras_Prohibidas = [] // Letras prohibidas
@@ -94,6 +96,7 @@ function teclaOKOK(e, fila, t) {
         letras_OKOK[t] = ""
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         var char = e.data.toLowerCase()
+        console.log(e.data)
         if (isLetraValida(char)) {
             if (letras_Prohibidas.indexOf(char) <= -1) {
                 document.getElementById("letra_OKOK_" + t).value = char
@@ -101,7 +104,7 @@ function teclaOKOK(e, fila, t) {
                 letras_OKOK[t] = char
             } else {
                 document.getElementById("letra_OKOK_" + t).value = ""
-                document.getElementById("warningMensaje").innerText = "Has usado una letra que está en la lista de letras prohibidas"
+                document.getElementById("warningMensaje").innerText = "Has usado la letra " + char + ",que está en la lista de letras prohibidas"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
             }
@@ -129,7 +132,7 @@ function teclaOK(e, fila, t) {
                 letras_OK[fila][t] = char
             } else {
                 document.getElementById("letra_OK_fila_" + fila + "_" + t).value = ""
-                document.getElementById("warningMensaje").innerText = "Has usado una letra que está; en la lista de letras prohibidas"
+                document.getElementById("warningMensaje").innerText = "Has usado la letra " + char + ",que está en la lista de letras prohibidas"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
             }
@@ -150,7 +153,7 @@ function teclaProhibidas(e) {
         var char = e.data.toLowerCase()
         if (isLetraValida(char)) {
             if (multiArrayContains(letras_OK, char) || letras_OKOK.indexOf(char) > -1) { //La letra ya esta entre las presentes
-                document.getElementById("warningMensaje").innerText = "La letra ya esta entre las necesarias de la palabra"
+                document.getElementById("warningMensaje").innerText = "La letra " + char + " ya esta entre las necesarias de la palabra"
                 modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
                 modal.show()
             } else {
@@ -172,10 +175,21 @@ $word_len.addEventListener('change', function () {
 
 $acentos.addEventListener('change', function () {
     acentos = $acentos.checked
+    if (acentos)
+        $soloAcentos.disabled = false
+    else {
+        $soloAcentos.checked = false
+        $soloAcentos.disabled = true
+    }
     letrasOKOK = []
     letrasOK = [[]]
     letrasProhibidas = []
     createPatron()
+})
+
+$soloAcentos.addEventListener('change', function() {
+    soloAcentos = $soloAcentos.checked
+    updateResultados()
 })
 
 function updateResultados() {
@@ -256,7 +270,18 @@ function filtrar() {
             results3.push(results2[i])
         }
     }
-    return results3.sort((a, b) => (b.rank) - (a.rank))
+
+   var results4 = []
+    if (soloAcentos) {
+        results3.forEach(x => {
+            if (contieneAcentos(x["palabra"]))
+                results4.push(x)
+        })
+    } else {
+        results4 = results3
+    }
+
+    return results4.sort((a, b) => (b.rank) - (a.rank))
 }
 
 function filtroAcentos(s) {
@@ -384,6 +409,15 @@ function desacentua(vocal) {
         default:
             return vocal
     }
+}
+
+function contieneAcentos(s) {
+    ret = false
+    for (let i = 0; i < s.length; i++) {
+        if (isAcentuada(s[i]))
+            return true
+    }
+    return ret
 }
 
 function array2String(arr) {
