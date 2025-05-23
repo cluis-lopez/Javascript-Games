@@ -63,36 +63,39 @@
             </div>
         </div>
 
+
                 <!-- Separador-->
         <div class="container mt-2"></div>
         
-        <div class="container mensajes">
-            <span>Letras Obligatorias en la palabra</span>
+        <div class="container mensajes mt-4">
+            <span>Letras Obligatorias</span>
         </div>
-        <div class="container mt-2">
+        <div class="container text-center mt-2">
             <div class="row">
-                <div class="col-md-auto">
-                    <div class="row" id="letrasObligatorias"></div>
+                <div class="col">
+                    <input type="text" id="letrasOblligatorias" class="form-control letrasP" maxlength="16"
+                        oninput="teclaObligatorias(event)">
                 </div>
-                <div class="col col-lg-2"></div>
             </div>
         </div>
 
                 <!-- Separador-->
         <div class="container mt-2"></div>
         
-        <div class="container mensajes">
-            <span>Letras Opcionales en la palabra</span>
+        <div class="container mensajes mt-4">
+            <span>Letras Prohibidas</span>
         </div>
-        <div class="container mt-2">
+        <div class="container text-center mt-2">
             <div class="row">
-                <div class="col-md-auto">
-                    <div class="row" id="letrasOpcionales"></div>
+                <div class="col">
+                    <input type="text" id="letrasProhibidas" class="form-control letrasP" maxlength="16"
+                        oninput="teclaProhibidas(event)">
                 </div>
-                <div class="col col-lg-2"></div>
             </div>
         </div>
 
+                <!-- Separador-->
+        <div class="container mt-2"></div>
 
         <div class="container mensajes mt-4">
             <span id="resultado">Palabras que se ajustan al patron</span>
@@ -102,6 +105,23 @@
             <div class="overflow-y-auto h-100 d-inline-block w-100 p-3">
                 <ul class="list-group" multiple id="resultados">
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Warning -->
+    <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Atención !!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="warningMensaje">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>

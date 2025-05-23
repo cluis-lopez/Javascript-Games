@@ -6,8 +6,7 @@ var wlen = parseInt($word_len.value)
 var acentos = $acentos.checked
 
 var letrasFijas = [] //letras en posicion prefijada
-var letrasOligatorias = []
-var letrasOpcionales = []
+var letrasObligatorias = []
 var letrasProhibidas = []
 
 var tempFiltro = []
@@ -22,7 +21,7 @@ function createApp() {
     }
 
     if (wlen == 0)
-        inputBox($letrasFijas, 8, "letrasFijas", "teclaLetraFija")
+        inputBox($letrasFijas, 3, "letrasFijas", "teclaLetraFija")
     else
         inputBox($letrasFijas, wlen, "letrasFijas", "teclaLetraFija")
 
@@ -82,29 +81,6 @@ function filtraLetrasProhibidas(lista, letrasP) {
     return temp
 }
 
-//Callbacks
-
-function teclaLetraFija(e, i) {
-    if (e.inputType === "deleteContentBackward") { // Pressed Delete
-        document.getElementById("letrasFijas_" + i).value = ""
-        document.getElementById("letrasFijas_" + i).style.backgroundColor = ""
-        letras_fijas[i] = ""
-    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
-        var char = e.data.toLowerCase()
-        if (isLetraValida(char)) {
-            document.getElementById("letrasFijas_" + i).value = char
-            document.getElementById("letrasFijas_" + i).style.backgroundColor = "lightgreen"
-            letras_fijas[i] = char
-        } else {
-            document.getElementById("letrasFijas_" + i).value = letras_fijas[i]
-            document.getElementById("letrasFijas_" + i).style.backgroundColor = ""
-        }
-
-    }
-
-    console.log(letrasFijas)
-}
-
 //Funciones Auxiliares
 
 function isLetraValida(letra) {
@@ -153,9 +129,89 @@ function isArrayEmpty(array) {
     return array.every(x => x == '')
 }
 
-//Gestión eventos
+function array2String(arr) {
+    var ret = ""
+    arr.forEach((x) => { ret = ret + x })
+    return ret
+}
+
+function string2Array(s) {
+    var ret = []
+    for (let i = 0; i < s.length; i++)
+        ret[i] = s[i]
+    return ret
+}
+
+//Gestión eventos y callbacks
 $word_len.addEventListener('change', function () {
     letras_fijas = []
     wlen = parseInt($word_len.value)
     createApp()
 })
+
+function teclaLetraFija(e, i) {
+    if (e.inputType === "deleteContentBackward") { // Pressed Delete
+        document.getElementById("letrasFijas_" + i).value = ""
+        document.getElementById("letrasFijas_" + i).style.backgroundColor = ""
+        letrasFijas
+//Callbacksi] = ""
+    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
+        var char = e.data.toLowerCase()
+        if (isLetraValida(char)) {
+            document.getElementById("letrasFijas_" + i).value = char
+            document.getElementById("letrasFijas_" + i).style.backgroundColor = "lightgreen"
+            letrasFijas[i] = char
+        } else {
+            document.getElementById("letrasFijas_" + i).value = letrasFijas[i]
+            document.getElementById("letrasFijas_" + i).style.backgroundColor = ""
+        }
+
+    }
+
+    console.log(letrasFijas)
+}
+
+function teclaObligatorias(e) {
+    if (e.inputType === "deleteContentBackward") { // Pressed Delete
+        letrasObligatorias.pop()
+    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
+        var char = e.data.toLowerCase()
+        if (isLetraValida(char)) {
+            if (letrasFijas.indexOf(char) > -1 || letrasObligatorias.indexOf(char) > -1) { //La letra ya esta entre las presentes
+                document.getElementById("warningMensaje").innerHTML = "La letra <B>" + char.toUpperCase() + "</B> ya est&aacute; entre las necesarias de la palabra"
+                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
+                modal.show()
+            } else if(letrasProhibidas.indexOf(char) > -1 ) { //La letra ya está entre las prohibidas
+                document.getElementById("warningMensaje").innerHTML = "La letra <B>" + char.toUpperCase() + "</B> est&aacute; entre las prohibidas de la palabra"
+                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
+                modal.show()
+            } else {
+                letrasObligatorias.push(char)
+            }
+        }
+        document.getElementById("letrasProhibidas").value = array2String(letrasProhibidas)
+    }
+    console.log(letrasObligatorias)
+}
+function teclaProhibidas(e) {
+    if (e.inputType === "deleteContentBackward") { // Pressed Delete
+        letrasProhibidas.pop()
+    } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
+        var char = e.data.toLowerCase()
+        if (isLetraValida(char)) {
+            if (letrasFijas.indexOf(char) > -1 || letrasObligatorias.indexOf(char) > -1) { //La letra ya esta entre las presentes
+                document.getElementById("warningMensaje").innerHTML = "La letra <B>" + char.toUpperCase() + "</B> est&aacute; entre las necesarias de la palabra"
+                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
+                modal.show()
+            } else if(letrasProhibidas.indexOf(char) > -1 ) { //La letra ya está entre las prohibidas
+                document.getElementById("warningMensaje").innerHTML = "La letra <B>" + char.toUpperCase() + "</B> ya est&aacute; entre las prohibidas de la palabra"
+                modal = new bootstrap.Modal(document.getElementById('warningModal'), { keyboard: false })
+                modal.show()
+            } else {
+                letrasProhibidas.push(char)
+            }
+        }
+        document.getElementById("letrasProhibidas").value = array2String(letrasProhibidas)
+    }
+    console.log(letrasProhibidas)
+}
