@@ -189,7 +189,7 @@ function teclaObligatorias(e) {
                 letrasObligatorias.push(char)
             }
         }
-        document.getElementById("letrasProhibidas").value = array2String(letrasProhibidas)
+        document.getElementById("letrasObligatorias").value = array2String(letrasObligatorias)
     }
     console.log(letrasObligatorias)
 }
