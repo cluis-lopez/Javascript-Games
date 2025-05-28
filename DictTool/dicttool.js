@@ -3,8 +3,8 @@ const $acentos = document.getElementById("acentos")
 const $resultados = document.getElementById("resultados")
 const LETRAS_FIJAS_INDEF = 3
 
-var wlen = parseInt($word_len.value)
-var acentos = $acentos.checked
+var wlen
+var acentos
 
 var letrasFijas = [] //letras en posicion prefijada
 var letrasObligatorias = []
@@ -19,6 +19,10 @@ function restart() {
     limpiaLetrasObligatorias()
     limpiaLetrasProhibidas()
     tempFiltro = [...rae_dict]
+    $word_len.value = 0
+    var wlen = parseInt($word_len.value)
+    $acentos.checked = false
+    var acentos = $acentos.checked
 }
 
 function creaLetrasFijas() {
@@ -82,15 +86,31 @@ function limpiaLetrasProhibidas() {
 }
 
 //Funciones clave de filtrado
-function filtrar() {
-    if (isArrayEmpty(letrasFijas) && isArrayEmpty(letrasOligatorias) && isArrayEmpty(letrasOpcionales)) {
-        tempFiltro = [] //Reinicio del buffer de palabras
+function filtrar(level) {
+    if (level == 0) { //Cambio en palabra fija. Hay que recalcular el filtro principal
+        tempFiltro = []
+        if (wlen != 0) { //Longitud de palabra prefijada
+            rae_dict.forEach(x => { if (x.length == wlen) tempFiltro.push(x) })
+        } else {
+            tempFiltro = [...rae_dict]
+        }
     }
 
-    if (wlen != 0) { //Longitud de palabra prefijada
-        rae_dict.forEach(x => { if (x.length == wlen) tempFiltro.push(x) })
-    } else {
-        tempFiltro = [...rae_dict]
+    if (level < 2){ //level 0 o 1: tempFiltro es válido pero 
+                    // hay que filtrarlo aun más porque se ha añadido alguna letra
+        if (wlen !=0){
+            //Palabra de longitud fija
+        } else {
+            //filtramos por primeras y ultimas letras
+        }
+    }
+
+    if (level < 3) {// level == 2. Se ha modificado la lista de letras obligatorias
+    
+    }
+
+    if (level == 3) { //level == 3. Se ha modificado la lista de letras prohibidas
+
     }
 }
 
@@ -124,16 +144,18 @@ function filtraLetrasProhibidas(lista, letrasP) {
 $word_len.addEventListener('change', function () {
     letras_fijas = []
     wlen = parseInt($word_len.value)
-    createApp()
+    filtrar(0)
 })
 
 function teclaLetraFija(e, i) {
+    var returnLevel = 0
     if (e.inputType === "deleteContentBackward") { // Pressed Delete
         document.getElementById("letrasFijas_" + i).value = ""
         document.getElementById("letrasFijas_" + i).style.backgroundColor = ""
         letrasFijas[i] = ""
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         var char = e.data.toLowerCase()
+        returnLevel=1
         if (isLetraValida(char)) {
             document.getElementById("letrasFijas_" + i).value = char
             document.getElementById("letrasFijas_" + i).style.backgroundColor = "lightgreen"
@@ -146,6 +168,7 @@ function teclaLetraFija(e, i) {
     }
 
     console.log(letrasFijas)
+    filtrar(returnLevel)
 }
 
 function teclaObligatorias(e) {
