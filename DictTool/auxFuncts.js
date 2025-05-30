@@ -110,32 +110,5 @@ function generateRegexpIndef() {
 function generateRegexpFija() {
     var temp = []
     letrasFijas.forEach(x => { if (x === '') { temp.push('.') } else { temp.push(x) } })
-    palabra = array2String(temp)
-    var exp = ""
-    if (!acentos) { //No hay acentos
-        for (let i = 0; i < palabra.length; i++) {
-            switch (palabra[i]) {
-                case 'a':
-                    exp = exp + '[a,á]'
-                    break
-                case 'e':
-                    exp = exp + '[e,é]'
-                    break
-                case 'i':
-                    exp = exp + '[i,í]'
-                    break
-                case 'o':
-                    exp = exp + '[o,ó]'
-                    break
-                case 'u':
-                    exp = exp + '[u,ú]'
-                    break
-                default:
-                    exp = exp + palabra[i]
-            }
-        }
-    } else {
-        exp = palabra
-    }
-    return new RegExp(exp)
+    return new RegExp(array2String(temp))
 }

@@ -3,8 +3,8 @@ const $acentos = document.getElementById("acentos")
 const $resultados = document.getElementById("resultados")
 const LETRAS_FIJAS_INDEF = 3
 
-var wlen
-var acentos
+var wlen = parseInt($word_len.value)
+var acentos = $acentos.checked
 
 var letrasFijas = [] //letras en posicion prefijada
 var letrasObligatorias = []
@@ -26,7 +26,6 @@ function restart() {
 }
 
 function creaLetrasFijas() {
-    letrasFijas = []
     if (wlen == 0) {
         var $letrasFijas = document.getElementById("letrasFijasStart")
         while ($letrasFijas.firstChild) {
@@ -43,17 +42,17 @@ function creaLetrasFijas() {
         letrasFijas = Array(LETRAS_FIJAS_INDEF * 2).fill("")
     }
     else {
-        var $letrasFijas = document.getElementById("letrasFijasStart")
-        while ($letrasFijas.firstChild) {
-            $letrasFijas.removeChild($letrasFijas.lastChild)
-        }
-        inputBox($letrasFijas, 0, wlen, "letrasFijas", "teclaLetraFija")
-
         $letrasFijas = document.getElementById("letrasFijasEnd")
         while ($letrasFijas.firstChild) {
             $letrasFijas.removeChild($letrasFijas.lastChild)
         }
         document.getElementById("separadorIndef").innerHTML = ""
+        var $letrasFijas = document.getElementById("letrasFijasStart")
+        while ($letrasFijas.firstChild) {
+            $letrasFijas.removeChild($letrasFijas.lastChild)
+        }
+
+        inputBox($letrasFijas, 0, wlen, "letrasFijas", "teclaLetraFija")
         letrasFijas = Array(wlen).fill("")
     }
 
@@ -85,6 +84,28 @@ function limpiaLetrasProhibidas() {
     document.getElementById("letrasProhibidas").value = ""
 }
 
+//Actualiza los resultados
+function updateResultados(res) {
+    document.getElementById("resultado").innerText = "Encontradas " + res.length +
+        " palabras con este patrón"
+    while ($resultados.firstChild)
+        $resultados.removeChild($resultados.lastChild)
+    if (res.length < 500) {
+        res.forEach(element => {
+            var opt = document.createElement("li")
+            opt.classList.add("list-group-item")
+            opt.classList.add("d-flex")
+            opt.classList.add("justify-content-between")
+            opt.classList.add("align-items-center")
+            opt.innerText = element
+            $resultados.appendChild(opt)
+        });
+    } else {
+        document.getElementById("resultado").innerText = "Encontradas " + res.length +
+            " palabras con este patrón. Número excesivo para mostrarlas todas. Ajuste el filtro"
+    }
+}
+
 //Funciones clave de filtrado
 function filtrar(level) {
     if (level == 0) { //Cambio en palabra fija. Hay que recalcular el filtro principal
@@ -96,22 +117,33 @@ function filtrar(level) {
         }
     }
 
-    if (level < 2){ //level 0 o 1: tempFiltro es válido pero 
-                    // hay que filtrarlo aun más porque se ha añadido alguna letra
-        if (wlen !=0){
+    if (level < 2) { //level 0 o 1: tempFiltro es válido pero 
+        // hay que filtrarlo aun más porque se ha añadido alguna letra
+        if (wlen != 0) {
             //Palabra de longitud fija
+            var rg = generateRegexpFija()
+            console.log("Reg expr: " + rg)
+            var temp = []
+            tempFiltro.forEach(x => { if (rg.test(x)) temp.push(x) })
+            tempFiltro = temp
         } else {
-            //filtramos por primeras y ultimas letras
+            var rg = generateRegexpIndef()
+            var temp = []
+            tempFiltro.forEach((x) => { if (rg[0].test(x)) temp.push(x) })
+            var temp2 = []
+            temp.forEach((x) => { if (rg[1].test(x)) temp2.push(x) })
+            tempFiltro = temp2
         }
     }
 
     if (level < 3) {// level == 2. Se ha modificado la lista de letras obligatorias
-    
+        tempFiltro = filtraLetrasObligatorias(tempFiltro, letrasObligatorias)
     }
 
     if (level == 3) { //level == 3. Se ha modificado la lista de letras prohibidas
-
+        tempFiltro = filtraLetrasProhibidas(tempFiltro, letrasProhibidas)
     }
+    updateResultados(tempFiltro)
 }
 
 function filtraLetrasObligatorias(lista, letrasObli) {
@@ -144,6 +176,8 @@ function filtraLetrasProhibidas(lista, letrasP) {
 $word_len.addEventListener('change', function () {
     letras_fijas = []
     wlen = parseInt($word_len.value)
+    console.log(wlen)
+    creaLetrasFijas()
     filtrar(0)
 })
 
@@ -155,7 +189,7 @@ function teclaLetraFija(e, i) {
         letrasFijas[i] = ""
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         var char = e.data.toLowerCase()
-        returnLevel=1
+        returnLevel = 1
         if (isLetraValida(char)) {
             document.getElementById("letrasFijas_" + i).value = char
             document.getElementById("letrasFijas_" + i).style.backgroundColor = "lightgreen"
@@ -168,12 +202,15 @@ function teclaLetraFija(e, i) {
     }
 
     console.log(letrasFijas)
+    console.log("Filtrando : " + returnLevel)
     filtrar(returnLevel)
 }
 
 function teclaObligatorias(e) {
+    var returnLevel=2
     if (e.inputType === "deleteContentBackward") { // Pressed Delete
         letrasObligatorias.pop()
+        returnLevel = 0
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         var char = e.data.toLowerCase()
         if (isLetraValida(char)) {
@@ -192,12 +229,13 @@ function teclaObligatorias(e) {
         document.getElementById("letrasObligatorias").value = simpleArray2String(letrasObligatorias)
     }
     console.log("Obligatorias: " + letrasObligatorias)
-    tempFiltro = filtraLetrasObligatorias(tempFiltro, letrasObligatorias)
-    console.log(tempFiltro)
+    filtrar(returnLevel)
 }
 function teclaProhibidas(e) {
+    var returnLevel = 3
     if (e.inputType === "deleteContentBackward") { // Pressed Delete
         letrasProhibidas.pop()
+        returnLevel = 0
     } else if (e.inputType === "insertText" || (e.inputType === "insertCompositionText" && e.data != "´")) {
         var char = e.data.toLowerCase()
         if (isLetraValida(char)) {
@@ -215,7 +253,5 @@ function teclaProhibidas(e) {
         }
         document.getElementById("letrasProhibidas").value = simpleArray2String(letrasProhibidas)
     }
-    console.log("Prohibidas: " + letrasProhibidas)
-    tempFiltro = filtraLetrasProhibidas(tempFiltro, letrasProhibidas)
-    console.log(tempFiltro)
+    filtrar(returnLevel)
 }
