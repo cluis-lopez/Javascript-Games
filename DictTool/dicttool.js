@@ -122,7 +122,6 @@ function filtrar(level) {
         if (wlen != 0) {
             //Palabra de longitud fija
             var rg = generateRegexpFija()
-            console.log("Reg expr: " + rg)
             var temp = []
             tempFiltro.forEach(x => { if (rg.test(x)) temp.push(x) })
             tempFiltro = temp
@@ -176,7 +175,6 @@ function filtraLetrasProhibidas(lista, letrasP) {
 $word_len.addEventListener('change', function () {
     letras_fijas = []
     wlen = parseInt($word_len.value)
-    console.log(wlen)
     creaLetrasFijas()
     filtrar(0)
 })
@@ -201,8 +199,6 @@ function teclaLetraFija(e, i) {
 
     }
 
-    console.log(letrasFijas)
-    console.log("Filtrando : " + returnLevel)
     filtrar(returnLevel)
 }
 
@@ -228,7 +224,7 @@ function teclaObligatorias(e) {
         }
         document.getElementById("letrasObligatorias").value = simpleArray2String(letrasObligatorias)
     }
-    console.log("Obligatorias: " + letrasObligatorias)
+    
     filtrar(returnLevel)
 }
 function teclaProhibidas(e) {
