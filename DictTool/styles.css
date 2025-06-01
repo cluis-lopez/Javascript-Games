@@ -29,3 +29,9 @@
     font-size: large;
 }
 
+#separadorIndef {
+    font-size: xx-large;
+    vertical-align: bottom;
+    text-align: center;
+}
+
