@@ -17,43 +17,49 @@
             <a class="navbar-brand" data-bs-toggle="modal" data-bs-target="#introModal">
                 <img src="logo.png" alt="logo" width="250">
             </a>
-            <div class="form-check form-switch form-control-lg">
-                <input class="form-check-input" type="checkbox" role="switch" id="acentos" disabled>
-                <label class="form-check-label" for="acentos">Usar tildes</label>
-            </div>
         </nav>
     </div>
 
     <div class="container mt-2">
-        <!-- Aqui incluir los filtros-->
-        <div class="container mensajes">
-            <span>Longitud de la palabra</span>
-            <form class="form-inline form-control-lg">
-                <select class="form-select" aria-label="Default select example" id="wlen">
-                    <option selected value="0">No definida</option>
-                    <option value="3">3 letras</option>
-                    <option value="4">4 letras</option>
-                    <option value="5">5 letras</option>
-                    <option value="6">6 letras</option>
-                    <option value="7">7 letras</option>
-                    <option value="8">8 letras</option>
-                    <option value="9">9 letras</option>
-                    <option value="10">10 letras</option>
-                    <option value="11">11 letras</option>
-                    <option value="12">12 letras</option>
-                    <option value="13">13 letras</option>
-                    <option value="14">14 letras</option>
-                    <option value="15">15 letras</option>
-                    <option value="16">16 letras</option>
-                </select>
-            </form>
-        </div>
         <!-- Separador-->
         <div class="container mt-2"></div>
 
         <div class="container mensajes">
-            <span>Letras Presentes en posición definida</span>
+            <div class="row">
+                <div clas="col col-lg-2">
+                    <button type="button" class="btn btn-outline-dark" id="generar">Regenerar</button>
+                </div>
+                <div class="col"></div>
+                <div class="col col-lg-2">
+                    <div class="form-check form-switch form-control-lg">
+                        <input class="form-check-input" type="checkbox" role="switch" id="auto">
+                        <label class="form-check-label" for="auto">Auto</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="lineaLetraOb" style="display: none;">
+                <div class="col">
+                    Letra Obligatoria
+                </div>
+                <div class="col">
+                    <input type="text" id="letraObligatorias" class="form-control letrasP" maxlength="1"
+                        oninput="teclaObligatorias(event)">
+                </div>
+            </div>
+            <div class="row" id="lineaLetrasOp" style="display: none;">
+                <div class="col">
+                    Letras O
+                </div>
+                <div class="col">
+                    <input type="text" id="letrasOpcionales" class="form-control letrasP" maxlength="6"
+                        oninput="teclaObligatorias(event)">
+                </div>
+            </div>
         </div>
+
+        <!-- Separador-->
+        <div class="container mt-2"></div>
+
         <div class="container mt-2">
             <div class="row">
                 <div class="col-md-auto">
