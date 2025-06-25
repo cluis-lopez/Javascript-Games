@@ -8,7 +8,7 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="styles.css" rel="stylesheet">
-    <title>DictTool</title>
+    <title>Heptagramas</title>
 </head>
 
 <body>
@@ -24,31 +24,34 @@
         <!-- Separador-->
         <div class="container mt-2"></div>
 
-        <div class="container mensajes">
+        <div class="container text-center mensajes">
             <div class="row">
-                <div clas="col col-lg-2">
-                    <button type="button" class="btn btn-outline-dark" id="generar">Regenerar</button>
+                <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="generar">Generar</button>
                 </div>
                 <div class="col"></div>
-                <div class="col col-lg-2">
+                <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="resolver">Resolver</button>
+                </div>
+                <div class="col"></div>
+                <div class="col">
                     <div class="form-check form-switch form-control-lg">
                         <input class="form-check-input" type="checkbox" role="switch" id="auto">
-                        <label class="form-check-label" for="auto">Auto</label>
+                        <label class="form-check-label" for="auto" id="label4auto">Auto</label>
                     </div>
                 </div>
             </div>
-            <div class="row" id="lineaLetraOb" style="display: none;">
-                <div class="col">
+
+            <div class="row p-2" id="lineaLetraOb" style="display: none;">
+                <div class="col text-end align-self-center">
                     Letra Obligatoria
                 </div>
                 <div class="col">
-                    <input type="text" id="letraObligatorias" class="form-control letrasP" maxlength="1"
-                        oninput="teclaObligatorias(event)">
+                    <input type="text" id="letraObligatoria" class="form-control letrasP" maxlength="1"
+                        oninput="teclaObligatoria(event)">
                 </div>
             </div>
             <div class="row" id="lineaLetrasOp" style="display: none;">
-                <div class="col">
-                    Letras O
+                <div class="col text-end align-self-center">
+                    Letras Opcionales
                 </div>
                 <div class="col">
                     <input type="text" id="letrasOpcionales" class="form-control letrasP" maxlength="6"
@@ -57,63 +60,36 @@
             </div>
         </div>
 
-        <!-- Separador-->
-        <div class="container mt-2"></div>
-
-        <div class="container mt-2">
-            <div class="row">
-                <div class="col-md-auto">
-                    <div class="row" id="letrasFijasStart"></div>
-                </div>
-                <div class="col col-lg-1" id="separadorIndef"></div>
-                <div class="col-md-auto">
-                    <div class="row" id="letrasFijasEnd"></div>
-                </div>
-            </div>
-        </div>
-
 
         <!-- Separador-->
-        <div class="container mt-2"></div>
+        <div class="container mt-5"></div>
 
-        <div class="container mensajes mt-4">
-            <span>Letras Obligatorias</span>
-        </div>
         <div class="container text-center mt-2">
             <div class="row">
                 <div class="col">
-                    <input type="text" id="letrasObligatorias" class="form-control letrasP" maxlength="24"
-                        oninput="teclaObligatorias(event)">
+                    <span id="crono">00:00</span>
                 </div>
+                <div class="col"></div>
+                <div class="col">
+                    <input type="text" id="palabraInput" class="form-control letrasP" maxlength="24"
+                        oninput="palabraInput(event)">
+                </div>
+                <div class="col"></div>
+                <div class="col" id="score">0/100</div>
             </div>
         </div>
 
         <!-- Separador-->
-        <div class="container mt-2"></div>
+        <div class="container mt-5"></div>
 
-        <div class="container mensajes mt-4">
-            <span>Letras Prohibidas</span>
-        </div>
-        <div class="container text-center mt-2">
+        <div class="container text-center mt-5">
             <div class="row">
                 <div class="col">
-                    <input type="text" id="letrasProhibidas" class="form-control letrasP" maxlength="24"
-                        oninput="teclaProhibidas(event)">
+                    <canvas id="principal" width="350" height="350"></canvas>
                 </div>
-            </div>
-        </div>
-
-        <!-- Separador-->
-        <div class="container mt-2"></div>
-
-        <div class="container mensajes mt-4">
-            <span id="resultado">Palabras que se ajustan al patron</span>
-        </div>
-
-        <div class="container mt-2" id="cresultado">
-            <div class="overflow-y-auto h-100 d-inline-block w-100 p-3">
-                <ul class="list-group" multiple id="resultados">
-                </ul>
+                <div class="col">
+                    <span id="resultados">Aqui el listado de palabras</span>
+                </div>
             </div>
         </div>
     </div>

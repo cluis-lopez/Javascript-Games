@@ -49,15 +49,15 @@ function acentua(letra) {
     return temp
 }
 
-function opuestas(lista, letraObligatoria){
+function opuestas(lista, letraObligatoria) {
     temp = []
     DICCIONARIO.forEach((x) => {
-        if (!lista.includes(x) && x != letraObligatoria){temp.push(x)}
+        if (!lista.includes(x) && x != letraObligatoria) { temp.push(x) }
     })
     return temp
 }
 
-function anadeVocalesAcentuadas(lista){
+function anadeVocalesAcentuadas(lista) {
     var temp = []
     lista.forEach((x) => {
         var temp2 = acentua(x)
@@ -67,9 +67,9 @@ function anadeVocalesAcentuadas(lista){
     return temp
 }
 
-function totalElementos(array){
+function totalElementos(array) {
     result = 0
-    for (var i=0; i<array.length; i++){
+    for (var i = 0; i < array.length; i++) {
         result = result + array[i][1].length
     }
     return result
@@ -80,12 +80,103 @@ function weighted_random(items, weights) {
 
     for (i = 1; i < weights.length; i++)
         weights[i] += weights[i - 1];
-    
+
     var random = Math.random() * weights[weights.length - 1];
-    
+
     for (i = 0; i < weights.length; i++)
         if (weights[i] > random)
             break;
-    
+
     return items[i];
+}
+
+function dibujaHepta(letras) {
+    $ctx.resetTransform()
+    $ctx.clearRect(0, 0, $canvas.width, $canvas.height)
+    $ctx.fillStyle = "rgb(200 200 200)";
+    $ctx.lineWidth = 5
+    $ctx.translate(10,10)
+
+    var p1 = HEPTAWIDTH / 2 * Math.sin(g2r(30))
+    var p2 = HEPTAWIDTH - p1
+    var p3 = p2 - HANCHO * Math.sin(g2r(30))
+    var p4 = p1 + HANCHO * Math.sin(g2r(30))
+
+    //Arriba
+    $ctx.beginPath();
+    $ctx.moveTo(p1, 0)
+    $ctx.lineTo(p2, 0);
+    $ctx.lineTo(p3, HANCHO);
+    $ctx.lineTo(p4, HANCHO)
+    $ctx.lineTo(p1, 0)
+    $ctx.stroke()
+    $ctx.fill();
+
+    //Arriba derecha
+    $ctx.beginPath();
+    $ctx.moveTo(p2, 0)
+    $ctx.lineTo(HEPTAWIDTH, HEPTAWIDTH / 2)
+    $ctx.lineTo(HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2)
+    $ctx.lineTo(p3, HANCHO)
+    $ctx.lineTo(p2, 0)
+    $ctx.stroke()
+    $ctx.fill()
+
+    //Abajo derecha
+    $ctx.beginPath();
+    $ctx.moveTo(HEPTAWIDTH, HEPTAWIDTH / 2)
+    $ctx.lineTo(p2, HEPTAWIDTH)
+    $ctx.lineTo(p3, HEPTAWIDTH - HANCHO)
+    $ctx.lineTo(HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2)
+    $ctx.lineTo(HEPTAWIDTH, HEPTAWIDTH / 2)
+    $ctx.stroke()
+    $ctx.fill()
+
+    //Abajo
+    $ctx.beginPath();
+    $ctx.moveTo(p1, HEPTAWIDTH)
+    $ctx.lineTo(p4, HEPTAWIDTH - HANCHO);
+    $ctx.lineTo(p3, HEPTAWIDTH - HANCHO);
+    $ctx.lineTo(p2, HEPTAWIDTH)
+    $ctx.lineTo(p1, HEPTAWIDTH)
+    $ctx.stroke()
+    $ctx.fill();
+
+    //Abajo izquierda
+    $ctx.beginPath();
+    $ctx.moveTo(p1, HEPTAWIDTH)
+    $ctx.lineTo(0, HEPTAWIDTH / 2);
+    $ctx.lineTo(HANCHO, HEPTAWIDTH / 2);
+    $ctx.lineTo(p4, HEPTAWIDTH - HANCHO);
+    $ctx.lineTo(p1, HEPTAWIDTH)
+    $ctx.stroke()
+    $ctx.fill();
+
+    //Arriba izquierda
+    $ctx.beginPath();
+    $ctx.moveTo(0, HEPTAWIDTH / 2)
+    $ctx.lineTo(HANCHO, HEPTAWIDTH / 2);
+    $ctx.lineTo(p4, HANCHO);
+    $ctx.lineTo(p1, 0);
+    $ctx.lineTo(0, HEPTAWIDTH / 2)
+    $ctx.stroke()
+    $ctx.fill();
+
+    $ctx.fillStyle = "rgb(0 0 0)";
+    $ctx.font = LETTERSIZE + "px Arial";
+    var gap = LETTERSIZE / 3
+    $ctx.fillText(letras[0].toUpperCase(), HEPTAWIDTH / 2 - gap, HANCHO / 2 + gap);
+    $ctx.fillText(letras[1].toUpperCase(), p3 + HANCHO / 2, HEPTAWIDTH / 3 + gap);
+    $ctx.fillText(letras[2].toUpperCase(), p3 + HANCHO / 2, HEPTAWIDTH - HEPTAWIDTH / 3 + gap);
+    $ctx.fillText(letras[3].toUpperCase(), HEPTAWIDTH / 2 - gap, HEPTAWIDTH - HANCHO / 2 + gap);
+    $ctx.fillText(letras[4].toUpperCase(), p1 - HANCHO / 2 + gap, HEPTAWIDTH - HEPTAWIDTH / 3 + gap);
+    $ctx.fillText(letras[5].toUpperCase(), p1 - HANCHO / 2 + gap, HEPTAWIDTH / 3 + gap);
+
+    //Letra Central = > Letra principal
+    $ctx.fillText(letras[6].toUpperCase(), HEPTAWIDTH/2 - gap, HEPTAWIDTH / 2 +gap);
+
+
+    function g2r(grados) {
+        return grados * Math.PI / 180
+    }
 }
