@@ -23,6 +23,8 @@ const $letraPrincipal = document.getElementById("letraPrincipal")
 const $letrasOpcionales = document.getElementById("letrasOpcionales")
 const $canvas = document.getElementById("principal");
 const $ctx = $canvas.getContext("2d");
+const $palabras = document.getElementById("palabras")
+const $palabraInput = document.getElementById("palabraInput")
 
 restart ("auto")
 
@@ -43,10 +45,6 @@ $auto.addEventListener('change', function () {
     }
 })
 
-$letraPrincipal.addEventListener('change', function(){
-    restart ("manual")
-})
-
 // Main Loop
 
 function restart(mode) {
@@ -59,6 +57,7 @@ function restart(mode) {
         letras[1] = $letrasOpcionales.value
     }
     mainPanel(letras[1].concat(letras[0]))
+    listadoPalabras(buscaPalabras(letras))
 }
 
 function mainPanel(letras) {
@@ -95,8 +94,6 @@ function escogeObligatoria(letras) {
     ret.push(letras[index])
     letras.splice(index, 1)
     ret.push(letras)
-    console.log("Letra obligatoria: " + ret[0])
-    console.log("Letras opcionales: " + ret[1])
     return ret
 }
 
@@ -112,11 +109,7 @@ function buscaPalabras(letras) {
         obligatoria.forEach((y) => { if (x.toLowerCase().includes(y)) temp.push(x) })
     })
 
-    console.log(temp.length + " palabras contienen la letra obligatoria " + obligatoria)
-
     //Eliminamos todas las que contengan alguna de las letras prohibidas
-
-    console.log("Las letras prohibidas son: " + prohibidas)
     var temp2 = []
     temp.forEach((x) => {
         if (prohibidas.every((y) => !x.toLowerCase().includes(y))) temp2.push(x)
@@ -126,7 +119,6 @@ function buscaPalabras(letras) {
 
     var temp3 = [letras[0]]
     temp3 = temp3.concat(letras[1]).sort()
-    console.log(temp3)
     var ret = []
     for (var i = 0; i < temp3.length; i++) {
         var temp4 = []
@@ -139,5 +131,6 @@ function buscaPalabras(letras) {
                                                             // ret[3] => palabras posibles
                                                             // ret[4] => palabras encontradas
     }
+    console.log(ret)
     return ret
 }

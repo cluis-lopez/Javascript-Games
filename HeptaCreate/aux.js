@@ -90,6 +90,18 @@ function weighted_random(items, weights) {
     return items[i];
 }
 
+function listadoPalabras(datos){
+    text = "<table class='table table-striped'>"
+
+    for (var i=0; i<datos.length; i++){
+        text = text +"<tr><td class='text-start'>Palabras que empiezan con <b>" + datos[i][0].toUpperCase() +
+                    "</b> " + datos[i][1] + "/" + datos[i][2]+": </td><td><td></tr>"
+    }
+
+    $palabras.innerHTML = text + "</table>"
+}
+
+
 function dibujaHepta(letras) {
     $ctx.resetTransform()
     $ctx.clearRect(0, 0, $canvas.width, $canvas.height)
