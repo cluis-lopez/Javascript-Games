@@ -8,11 +8,12 @@
     max-width: 60px;
 }
 
-.letrasP {
+.palabraInput {
     font-family: Arial, Helvetica, sans-serif;
     font-size:x-large;
     border-radius: 5%;
     border-color: darkblue;
+    min-height: 50px;
 }
 
 .mensajes {

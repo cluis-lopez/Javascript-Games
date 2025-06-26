@@ -25,11 +25,47 @@ const $canvas = document.getElementById("principal");
 const $ctx = $canvas.getContext("2d");
 const $palabras = document.getElementById("palabras")
 const $palabraInput = document.getElementById("palabraInput")
+const $score = document.getElementById("score")
 
-restart ("auto")
+var letraPrincipal = ""
+var letrasOpcionales = []
+var palabrasHepta = {}
+var palabra = ""
+
+restart("auto")
 
 
 //Eventos
+function palabraInput(e) {
+    var temp = letraPrincipal + array2str(letrasOpcionales)
+    if (e.key == "Backspace") {
+        palabra = palabra.slice(0, palabra.length - 1)
+        $palabraInput.innerText = palabra.toUpperCase()
+    } else if (temp.includes(e.key) && palabra.length < 25) {
+        palabra = palabra + e.key
+        $palabraInput.innerText = palabra.toUpperCase()
+    } else if (e.key == "Enter") {
+        if (!palabra.includes(letraPrincipal)) {
+            palabra = ""
+            $palabraInput.innerText = "La palabra no incluye la letra " + letraPrincipal.toUpperCase()
+        } else if (palabra.length < 3) {
+            palabra = ""
+            $palabraInput.innerText = "La palabra debe tener al menos 3 letras"
+        } else {//La letra principal está incluida en la palabra hay que comprobar si es válida
+            if (esPalabraValida(palabra)) {
+                console.log("success")
+                palabra = ""
+                $palabraInput.innerText = ""
+            } else {
+                palabra = ""
+                $palabraInput.innerText = "Palabra inválida"
+            }
+        }
+    } else { //letra invalida
+        if (palabra.length == 0) $palabraInput.innerText = ""
+    }
+}
+
 $auto.addEventListener('change', function () {
     if ($auto.checked == true) {
         document.getElementById("lineaLetraOb").style.display = ""
@@ -48,20 +84,25 @@ $auto.addEventListener('change', function () {
 // Main Loop
 
 function restart(mode) {
+    palabra = ""
     var letras = []
-    if (mode == "auto"){
+    if (mode == "auto") {
         letras = escogeObligatoria(generaLetras())
-        //Letra principal = letras[0]
+        letraPrincipal = letras[0]
+        letrasOpcionales = letras[1]
     } else {
-        letras[0] = $letraPrincipal.value
-        letras[1] = $letrasOpcionales.value
+        letraPrincipal = $letraPrincipal.value
+        letrasOpcionales = $letrasOpcionales.value.split("")
     }
-    mainPanel(letras[1].concat(letras[0]))
-    listadoPalabras(buscaPalabras(letras))
-}
 
-function mainPanel(letras) {
-    dibujaHepta(letras)
+    palabrasHepta = buscaPalabras(letras)
+    dibujaHepta(letrasOpcionales.concat([letraPrincipal]))
+    listadoPalabras(palabrasHepta)
+
+    var totalPalabras = 0
+    for (i of palabrasHepta)
+        totalPalabras += i[1][1]
+    $score.innerText = "0/" + totalPalabras
 }
 
 
@@ -104,9 +145,9 @@ function buscaPalabras(letras) {
 
     var temp = []
 
-    //Nos quedamos solo con las palabras que contengan la letra obligatoria
+    //Nos quedamos solo con las palabras que contengan la letra obligatoria y tengan 3 o más letras
     rae_dict.forEach((x) => {
-        obligatoria.forEach((y) => { if (x.toLowerCase().includes(y)) temp.push(x) })
+        obligatoria.forEach((y) => { if (x.toLowerCase().includes(y) && x.length > 2) temp.push(x) })
     })
 
     //Eliminamos todas las que contengan alguna de las letras prohibidas
@@ -119,18 +160,28 @@ function buscaPalabras(letras) {
 
     var temp3 = [letras[0]]
     temp3 = temp3.concat(letras[1]).sort()
-    var ret = []
+    var ret = new Map()
     for (var i = 0; i < temp3.length; i++) {
         var temp4 = []
         var letraInicial = temp3[i]
         temp2.forEach((x) => { if (x[0] == letraInicial) temp4.push(x) })
-        ret.push([letraInicial,0, temp4.length, temp4, []]) //Estructura:
-                                                            // ret[0] => letra Inicial
-                                                            // ret[1] =>  # de palabras encontradas
-                                                            // ret[2] => numero de palabras posibles
-                                                            // ret[3] => palabras posibles
-                                                            // ret[4] => palabras encontradas
+        temp5 = [0, temp4.length, temp4, []] //Estructura:
+        // [0] =>  # de palabras encontradas
+        // [1] => numero de palabras posibles
+        // [2] => palabras posibles
+        // [3] => palabras encontradas
+        ret.set(letraInicial, temp5)
     }
     console.log(ret)
     return ret
+}
+
+function esPalabraValida(palabra) {
+    for (var i of palabrasHepta) {
+        for (var x in i[1][2]) {
+            if (desacentua(i[1][2][x]) === palabra)
+                return true
+        }
+    }
+    return false
 }

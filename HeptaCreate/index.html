@@ -69,12 +69,16 @@
                 <div class="col">
                     <span id="crono">00:00</span>
                 </div>
-                <div class="col"></div>
-                <div class="col">
-                    <input type="text" id="palabraInput" class="form-control letrasP" maxlength="24"
+                <div class="col-6">
+                    <!--
+                    <input type="text" id="palabraInput" class="form-control align-center letrasP" maxlength="24"
                         oninput="palabraInput(event)">
+                -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary align-center palabraInput" type="button" id="palabraInput"
+                            onkeydown="palabraInput(event)"></button>
+                    </div>
                 </div>
-                <div class="col"></div>
                 <div class="col" id="score">0/100</div>
             </div>
         </div>
