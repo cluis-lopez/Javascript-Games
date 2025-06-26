@@ -26,11 +26,15 @@ const $ctx = $canvas.getContext("2d");
 const $palabras = document.getElementById("palabras")
 const $palabraInput = document.getElementById("palabraInput")
 const $score = document.getElementById("score")
+const $crono = document.getElementById("crono")
 
 var letraPrincipal = ""
 var letrasOpcionales = []
 var palabrasHepta = {}
 var palabra = ""
+var minutos = 0
+var segundos = 0
+var isPaused = false
 
 restart("auto")
 
@@ -52,10 +56,22 @@ function palabraInput(e) {
             palabra = ""
             $palabraInput.innerText = "La palabra debe tener al menos 3 letras"
         } else {//La letra principal está incluida en la palabra hay que comprobar si es válida
-            if (esPalabraValida(palabra)) {
-                console.log("success")
-                palabra = ""
-                $palabraInput.innerText = ""
+            result = esPalabraValida(palabra)
+            if (result.length > 0) {
+                if (esPalabraYaValidada(palabra)) {
+                    palabra = ""
+                    $palabraInput.innerText = "Palabra ya descubierta"
+                } else { //Nueva palabra descubierta !!!
+                    console.log("Success. Palabra(s) valida(s): " + result)
+                    console.log(palabrasHepta.get(palabra[0]))
+                    temp = palabrasHepta.get(palabra[0])
+                    temp[0] = temp[0] + result.length //Incrementamos el contador de palabras encontradas
+                    temp[3] = temp[3].concat(result)
+                    palabra = ""
+                    $palabraInput.innerText = ""
+                    listadoPalabras(palabrasHepta)
+
+                }
             } else {
                 palabra = ""
                 $palabraInput.innerText = "Palabra inválida"
@@ -65,6 +81,15 @@ function palabraInput(e) {
         if (palabra.length == 0) $palabraInput.innerText = ""
     }
 }
+
+$resolver.addEventListener("click", function(){
+    isPaused = true
+    for (i of palabrasHepta){
+        i[1][2].forEach((x) => i[1][3].push("<b>"+x+"</b>"))
+    }
+    listadoPalabras(palabrasHepta)
+})
+
 
 $auto.addEventListener('change', function () {
     if ($auto.checked == true) {
@@ -85,6 +110,8 @@ $auto.addEventListener('change', function () {
 
 function restart(mode) {
     palabra = ""
+    minutos = 0
+    segundos = 0
     var letras = []
     if (mode == "auto") {
         letras = escogeObligatoria(generaLetras())
@@ -103,6 +130,18 @@ function restart(mode) {
     for (i of palabrasHepta)
         totalPalabras += i[1][1]
     $score.innerText = "0/" + totalPalabras
+
+    setInterval(contador, 1000)
+}
+
+function contador() {
+    if (isPaused) return
+    segundos++
+    if (segundos == 60) {
+        segundos = 0
+        minutos++
+    }
+    $crono.innerHTML = '<b>' + minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0') + '</b>'
 }
 
 
@@ -177,9 +216,20 @@ function buscaPalabras(letras) {
 }
 
 function esPalabraValida(palabra) {
+    var ret = []
     for (var i of palabrasHepta) {
         for (var x in i[1][2]) {
             if (desacentua(i[1][2][x]) === palabra)
+                ret.push(i[1][2][x])
+        }
+    }
+    return ret
+}
+
+function esPalabraYaValidada(palabra) {
+    for (var i of palabrasHepta) {
+        for (var x in i[1][2]) {
+            if (desacentua(i[1][3][x]) === palabra)
                 return true
         }
     }
