@@ -128,12 +128,12 @@ function array2str(array) {
     return ret
 }
 
-function esHeptaPalabra(palabra, letras){
+function esHeptaPalabra(palabra, letras) {
     ret = true
-    for (var x in letras){
-        if (! palabra.includes(letras[x])){
+    for (var x in letras) {
+        if (!palabra.includes(letras[x])) {
             ret = false
-            }
+        }
     }
     return ret
 }
@@ -142,7 +142,9 @@ function listadoPalabras(datos) {
     text = "<table class='table table-striped'>"
 
     for (var i of datos) {
-        if (i[1][1] == 0) break //No hay palabras que comiencen por esta letra
+        if (i[1][1] == 0) {
+            continue //No hay palabras que comiencen por esta letra
+        }
         text = text + "<tr><td class='text-start'>Palabras que empiezan con <b>" + i[0].toUpperCase() +
             "</b> " + i[1][0] + "/" + i[1][1] + ": </td><td>"
         i[1][3].forEach((x) => text = text + x + ", ")
