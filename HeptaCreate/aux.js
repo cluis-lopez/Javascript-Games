@@ -119,7 +119,7 @@ function weighted_random(items, weights) {
         if (weights[i] > random)
             break;
 
-    return items[i];
+    return i; //Devolvemos el índice, no el elemento !!!
 }
 
 function array2str(array) {
