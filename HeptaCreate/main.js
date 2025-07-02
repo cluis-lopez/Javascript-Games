@@ -176,22 +176,19 @@ $check.addEventListener("click", function () {
         temp[i - 1] = document.getElementById("letraO" + i).innerText.toLowerCase()
     }
     letras.push(temp)
-    console.log("Letra Obli: " + letras[0] + " Letras Opci " + letras[1])
 
     var mensaje = letrasValidas(letras)
-    console.log("Mensaje : " + mensaje)
 
     if (mensaje == "") {
         var temp = buscaPalabras(letras)
         var num1 = numPalabrasTotalesEncontradas(temp)
         var num2 = totalPalabrasHeptas(temp).length
-        console.log("Palabras: " + num1 + " Heptas " + num2)
+
         mensaje = "La combinación proporciona un juego con " + num1 +
             " palabras válidas y " + num2 + " palabras Hepta"
         document.getElementById("jugar").disabled = false
     }
     document.getElementById("resultadosCheck").innerHTML = mensaje
-    console.log("Mensaje " + mensaje)
 })
 
 $jugar.addEventListener("click", function () {
@@ -234,7 +231,6 @@ function updateScore(){
     + "<td>" + i + "%</td></tr></table>"
 
     $score.innerHTML = temp
-    console.log(typeof (numPalabrasDescubiertas) + "    " + temp)
 }
 
 // Main Loop

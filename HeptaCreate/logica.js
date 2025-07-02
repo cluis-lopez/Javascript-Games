@@ -42,12 +42,15 @@ function buscaPalabras(letras) {
     var obligatoria = acentua(letras[0]) //Si es una vocal añadimos el acento a la lista
     var prohibidas = anadeVocalesAcentuadas(opuestas(letras[1], letras[0])) //letras que NO pueden aparecer. 
     //Incluyendo las vocales acentuadas en su caso
-
     var temp = []
 
     //Nos quedamos solo con las palabras que contengan la letra obligatoria y tengan 3 o más letras
     rae_dict.forEach((x) => {
-        obligatoria.forEach((y) => { if (x.toLowerCase().includes(y) && x.length > 2) temp.push(x) })
+        for (var i in obligatoria) {
+            if (x.toLowerCase().includes(obligatoria[i]) && x.length > 2) { 
+                temp.push(x); break 
+            }
+        }
     })
 
     //Eliminamos todas las que contengan alguna de las letras prohibidas
@@ -64,7 +67,7 @@ function buscaPalabras(letras) {
     for (var i = 0; i < temp3.length; i++) {
         var temp4 = []
         var letraInicial = temp3[i]
-        temp2.forEach((x) => { if (x[0] == letraInicial) temp4.push(x) })
+        temp2.forEach((x) => { if (desacentua(x[0]) == letraInicial) temp4.push(x) })
         temp5 = [0, temp4.length, temp4, []] //Estructura:
         // [0] =>  # de palabras encontradas
         // [1] => numero de palabras posibles
@@ -75,9 +78,9 @@ function buscaPalabras(letras) {
     return ret
 }
 
-function numPalabrasTotalesEncontradas(struct){
+function numPalabrasTotalesEncontradas(struct) {
     ret = 0
-    for (var i of struct){
+    for (var i of struct) {
         ret = ret + i[1][1]
     }
     return ret
@@ -114,15 +117,15 @@ function esHeptaPalabra(palabra, letras) {
     return ret
 }
 
-function totalPalabrasHeptas(struct){
+function totalPalabrasHeptas(struct) {
     var ret = []
     var letras = []
-    for (var i of struct){ // Cada letra inicial
+    for (var i of struct) { // Cada letra inicial
         letras.push(i[0])
     }
 
-    for (var i in letras){
-        for (var j of struct.get(letras[i])[2]){// Cada palabra 
+    for (var i in letras) {
+        for (var j of struct.get(letras[i])[2]) {// Cada palabra 
             if (esHeptaPalabra(desacentua(j), letras))
                 ret.push(j)
         }
@@ -130,13 +133,13 @@ function totalPalabrasHeptas(struct){
     return ret
 }
 
-function letrasValidas(let){
+function letrasValidas(let) {
     var le = let[1].concat(let[0])
     var j = le.length
-    for (var i=0; i<j; i++){
-        l = array2str(le.splice(0,1))
+    for (var i = 0; i < j; i++) {
+        l = array2str(le.splice(0, 1))
         if (l == "")
-            return  "Alguna de las letras esta vacia"
+            return "Alguna de las letras esta vacia"
         if (le.includes(l))
             return "Alguna letra esta repetida"
     }
