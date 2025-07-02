@@ -16,9 +16,14 @@ const HEPTAWIDTH = 300
 const HANCHO = 75
 const LETTERSIZE = 30
 
+//ID's del Modal
 const $generar = document.getElementById("generar")
 const $resolver = document.getElementById("resolver")
 const $auto = document.getElementById("auto")
+const $check = document.getElementById("check")
+const $jugar = document.getElementById("jugar")
+
+//ID's pagina principal
 const $letraPrincipal = document.getElementById("letraPrincipal")
 const $letrasOpcionales = document.getElementById("letrasOpcionales")
 const $canvas = document.getElementById("principal");
@@ -66,10 +71,10 @@ function palabraInput(e) {
                     $palabraInput.innerText = "Palabra ya descubierta"
                 } else { //Nueva palabra descubierta !!!
                     temp = palabrasHepta.get(palabra[0])
-                    temp[0] =+ result.length //Incrementamos el contador de palabras encontradas
-                    numPalabrasDescubiertas =+ result.length
+                    temp[0] = + result.length //Incrementamos el contador de palabras encontradas
+                    numPalabrasDescubiertas = + result.length
                     temp[3] = temp[3].concat(result)
-                    for (var i in result){
+                    for (var i in result) {
                         if (esHeptaPalabra(i, letrasOpcionales.concat([letraPrincipal])))
                             numHeptasDescubiertos++
                     }
@@ -88,29 +93,109 @@ function palabraInput(e) {
     }
 }
 
-$resolver.addEventListener("click", function(){
+function letraInput(e, tipo, numLetra) {
+    if ($auto.checked) // En modo automatico no se pueden cambiar las letras
+        return
+    var $letra = document.getElementById("letraO" + numLetra)
+    var letraObli = ""
+    var letrasOp = []
+
+    if (e.key == "Backspace") {
+        $letra.innerHTML = ""
+        if (tipo) { //true if letra obligatoria
+            letraObli = ""
+        } else { //letra Opcional
+            letrasOp[numLetra - 1] = ""
+        }
+    } else if (e.key >= "a" && e.key <= "z" || e.key == "ñ") {
+        if (tipo) {
+            letraObli = e.key.toUpperCase()
+            $letra.innerHTML = e.key.toUpperCase()
+        } else {
+            letrasOp[numLetra - 1] = e.key.toUpperCase()
+            $letra.innerHTML = e.key.toUpperCase()
+        }
+    }
+}
+
+$resolver.addEventListener("click", function () {
     isPaused = true
-    for (i of palabrasHepta){
-        i[1][2].forEach((x) => i[1][3].push("<b>"+x+"</b>"))
+    for (i of palabrasHepta) {
+        i[1][2].forEach((x) => i[1][3].push("<b>" + x + "</b>"))
     }
     listadoPalabras(palabrasHepta)
 })
 
-
-$auto.addEventListener('change', function () {
-    if ($auto.checked == true) {
-        document.getElementById("lineaLetraOb").style.display = ""
-        document.getElementById("lineaLetrasOp").style.display = ""
-        document.getElementById("label4auto").innerText = "Manual"
-    } else {
-        document.getElementById("lineaLetraOb").style.display = "none"
-        document.getElementById("lineaLetrasOp").style.display = "none"
-        document.getElementById("letraObligatoria").value = ""
-        document.getElementById("letrasOpcionales").value = ""
-        document.getElementById("label4auto").innerText = "Auto"
-        restart("auto")
+$generar.addEventListener("click", function () {
+    actualizaMensaje($auto.checked)
+    if ($auto.checked) { //En el modo automatico generamos las letras
+        var letras = escogeObligatoria(generaLetras())
+        document.getElementById("letraO0").innerHTML = letras[0].toUpperCase()
+        for (var i = 1; i < 7; i++) {
+            document.getElementById("letraO" + i).innerHTML = letras[1][i - 1].toUpperCase()
+        }
     }
 })
+
+$auto.addEventListener('change', function () {
+    if ($auto.checked) {
+        document.getElementById("label4auto").innerHTML = "Auto"
+    } else {
+        document.getElementById("label4auto").innerHTML = "Manual"
+    }
+    
+    actualizaMensaje($auto.checked)
+    document.getElementById("resultadosCheck").innerHTML = ""
+
+    if ($auto.checked) { //En el modo automatico generamos las letras
+        var letras = escogeObligatoria(generaLetras())
+        document.getElementById("letraO0").innerHTML = letras[0]
+        for (var i = 1; i < 7; i++) {
+            document.getElementById("letraO" + i).innerHTML = letras[1][i - 1]
+        }
+    } else { //Hemos pasado al modo manual asi que borramos las letras
+        for (var i = 0; i < 7; i++) {
+            document.getElementById("letraO" + i).innerHTML = ""
+        }
+    }
+})
+
+$check.addEventListener("click", function () {
+    var letras = []
+    letras [0] = document.getElementById("letraO0").innerText.toLowerCase()
+    var temp = []
+    for (var i=1; i<7; i++){
+        temp[i-1] = document.getElementById("letraO" + i).innerText.toLowerCase()
+    }
+    letras.push(temp)
+    console.log("Letra Obli: " + letras[0] + " Letras Opci " +letras[1])
+
+    var mensaje =letrasValidas(letras)
+    console.log("Mensaje : " + mensaje)
+
+    if (mensaje == ""){
+        var temp = buscaPalabras(letras)
+        var num1 = numPalabrasTotalesEncontradas(temp)
+        var num2 = totalPalabrasHeptas(temp).length
+        console.log ("Palabras: " + num1 + " Heptas " + num2)
+        mensaje = "La combinación proporciona un juego con " + num1 +
+        " palabras válidas y " + num2 + " palabras Hepta"
+        document.getElementById("jugar").disabled=false
+    }
+    document.getElementById("resultadosCheck").innerHTML=mensaje
+    console.log("Mensaje " + mensaje)
+})
+
+function actualizaMensaje(estado) {
+    if (estado) { //true by default
+        document.getElementById("generaMensaje").innerHTML = "En el modo automatico " +
+            "se generan letras de forma aleatoria en base al patr&oacute;n de uso " +
+            "del diccionario de la RAE"
+    } else {
+        document.getElementById("generaMensaje").innerHTML = "En el modo manual " +
+            "deben escogerse la letra obligatoria y las seis letras opcionales"
+    }
+}
 
 // Main Loop
 
@@ -134,9 +219,9 @@ function restart(mode) {
 
     var totalPalabras = 0
     var numHeptas = 0
-    for (var i of palabrasHepta){
+    for (var i of palabrasHepta) {
         totalPalabras += i[1][1]
-        for (var j = 0; j<(i[1][2]).length; j++){
+        for (var j = 0; j < (i[1][2]).length; j++) {
             if (esHeptaPalabra(i[1][2][j], letras[1].concat(letras[0])))
                 numHeptas++
         }

@@ -128,16 +128,6 @@ function array2str(array) {
     return ret
 }
 
-function esHeptaPalabra(palabra, letras) {
-    ret = true
-    for (var x in letras) {
-        if (!palabra.includes(letras[x])) {
-            ret = false
-        }
-    }
-    return ret
-}
-
 function listadoPalabras(datos) {
     text = "<table class='table table-striped'>"
 

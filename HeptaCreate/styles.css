@@ -1,16 +1,11 @@
-.letras {
+.scoring {
     font-family: Arial, Helvetica, sans-serif;
-    font-size:x-large;
-    text-align: center;
-    border-radius: 5%;
-    border-color: darkblue;
-    min-width: 37px;
-    max-width: 60px;
+    font-size: x-large;
 }
 
 .palabraInput {
     font-family: Arial, Helvetica, sans-serif;
-    font-size:x-large;
+    font-size: x-large;
     border-radius: 5%;
     border-color: darkblue;
     min-height: 50px;
@@ -22,4 +17,12 @@
     padding: 1em;
 }
 
-
+.cajaLetra {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size:x-large;
+    text-align: center;
+    min-width: 45px;
+    max-width: 45px;
+    min-height: 45px;
+    max-height: 45px;
+}

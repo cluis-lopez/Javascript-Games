@@ -11,8 +11,6 @@ function generaLetras() {
         for (j in vocales)
             pesosVocales[j] = PESOS.get(vocales[j])
         var index = weighted_random(vocales, pesosVocales)
-        console.log("Vocales: " + vocales + " Pesos" + pesosVocales)
-        console.log("Escogida " + vocales[index])
         letras.push(vocales[index])
         vocales.splice(index, 1)
     }
@@ -41,6 +39,7 @@ function escogeObligatoria(letras) {
 }
 
 function buscaPalabras(letras) {
+    console.log("Obligatoria: " +letras[0] +" Opcionales: " +letras[1])
     var obligatoria = acentua(letras[0]) //Si es una vocal añadimos el acento a la lista
     var prohibidas = anadeVocalesAcentuadas(opuestas(letras[1], letras[0])) //letras que NO pueden aparecer. 
     //Incluyendo las vocales acentuadas en su caso
@@ -74,7 +73,14 @@ function buscaPalabras(letras) {
         // [3] => palabras encontradas
         ret.set(letraInicial, temp5)
     }
-    console.log(ret)
+    return ret
+}
+
+function numPalabrasTotalesEncontradas(struct){
+    ret = 0
+    for (var i of struct){
+        ret = ret + i[1][1]
+    }
     return ret
 }
 
@@ -97,4 +103,46 @@ function esPalabraYaValidada(palabra) {
         }
     }
     return false
+}
+
+function esHeptaPalabra(palabra, letras) {
+    ret = true
+    for (var x in letras) {
+        if (!palabra.includes(letras[x])) {
+            ret = false
+        }
+    }
+    return ret
+}
+
+function totalPalabrasHeptas(struct){
+    var ret = []
+    var letras = []
+    for (var i of struct){ // Cada letra inicial
+        letras.push(i[0])
+    }
+    console.log(letras)
+
+    for (var i in letras){
+        console.log("Recorriendo: " + letras[i])
+        for (var j of struct.get(letras[i])[2]){// Cada palabra 
+            console.log("palabra " + j)
+            if (esHeptaPalabra(desacentua(j), letras))
+                ret.push(j)
+        }
+    }
+    return ret
+}
+
+function letrasValidas(let){
+    var le = let[1].concat(let[0])
+    var j = le.length
+    for (var i=0; i<j; i++){
+        l = array2str(le.splice(0,1))
+        if (l == "")
+            return  "Alguna de las letras esta vacia"
+        if (le.includes(l))
+            return "Alguna letra esta repetida"
+    }
+    return ""
 }

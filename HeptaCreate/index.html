@@ -26,36 +26,11 @@
 
         <div class="container text-center mensajes">
             <div class="row">
-                <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="generar">Generar</button>
+                <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="generar"
+                        data-bs-toggle="modal" data-bs-target="#generaModal">Generar</button>
                 </div>
-                <div class="col"></div>
+                <div class="col-3"></div>
                 <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="resolver">Resolver</button>
-                </div>
-                <div class="col"></div>
-                <div class="col">
-                    <div class="form-check form-switch form-control-lg">
-                        <input class="form-check-input" type="checkbox" role="switch" id="auto">
-                        <label class="form-check-label" for="auto" id="label4auto">Auto</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row p-2" id="lineaLetraOb" style="display: none;">
-                <div class="col text-end align-self-center">
-                    Letra Obligatoria
-                </div>
-                <div class="col">
-                    <input type="text" id="letraObligatoria" class="form-control letrasP" maxlength="1"
-                        oninput="teclaObligatoria(event)">
-                </div>
-            </div>
-            <div class="row" id="lineaLetrasOp" style="display: none;">
-                <div class="col text-end align-self-center">
-                    Letras Opcionales
-                </div>
-                <div class="col">
-                    <input type="text" id="letrasOpcionales" class="form-control letrasP" maxlength="6"
-                        oninput="teclaObligatorias(event)">
                 </div>
             </div>
         </div>
@@ -67,7 +42,7 @@
         <div class="container text-center mt-2">
             <div class="row">
                 <div class="col">
-                    <span id="crono">00:00</span>
+                    <span class="scoring" id="crono">00:00</span>
                 </div>
                 <div class="col-6">
                     <!--
@@ -79,7 +54,7 @@
                             onkeydown="palabraInput(event)"></button>
                     </div>
                 </div>
-                <div class="col" id="score">0/100</div>
+                <div class="col"><span class="scoring" id="score">0/100</span></div>
             </div>
         </div>
 
@@ -98,18 +73,61 @@
         </div>
     </div>
 
-    <!-- Modal Warning -->
-    <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal Generar -->
+    <div class="modal fade" id="generaModal" tabindex="-1" aria-labelledby="generaModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Atención !!</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h1 class="modal-title fs-5">Crear Nuevo Juego</h1>
                 </div>
-                <div class="modal-body" id="warningMensaje">
+
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div class="p-2" id="generaMensaje"></div>
+                        <div class="p-2">
+                            <div class="form-check form-switch form-control-lg">
+                                <label class="form-check-label" for="auto" id="label4auto">Auto</label>
+                                <input class="form-check-input" type="checkbox" role="switch" id="auto" checked="true">
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="modal-body">
+                    <table>
+                        <tr>
+                            <td>Letra Obligatoria</td>
+                            <td><button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO0"
+                                    onkeydown="letraInput(event, true, 0)"></button></td>
+                        </tr>
+                        <tr>
+                            <td>Letras Opcionales</td>
+                            <td>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO1"
+                                    onkeydown="letraInput(event, false, 1)"></button>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO2"
+                                    onkeydown="letraInput(event, false, 2)"></button>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO3"
+                                    onkeydown="letraInput(event, false, 3)"></button>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO4"
+                                    onkeydown="letraInput(event, false, 4)"></button>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO5"
+                                    onkeydown="letraInput(event, false, 5)"></button>
+                                <button class="btn btn-outline-dark align-center cajaLetra" type="button" id="letraO6"
+                                    onkeydown="letraInput(event, false, 6)"></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="modal-body" id="resultadosCheck">
+
+                </div>
+                
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="check">Check</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="jugar" disabled="true">Jugar</button>
                 </div>
             </div>
         </div>
