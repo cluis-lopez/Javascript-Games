@@ -24,8 +24,6 @@ const $check = document.getElementById("check")
 const $jugar = document.getElementById("jugar")
 
 //ID's pagina principal
-const $letraPrincipal = document.getElementById("letraPrincipal")
-const $letrasOpcionales = document.getElementById("letrasOpcionales")
 const $canvas = document.getElementById("principal");
 const $ctx = $canvas.getContext("2d");
 const $palabras = document.getElementById("palabras")
@@ -44,7 +42,7 @@ var minutos = 0
 var segundos = 0
 var isPaused = false
 
-restart("auto")
+restart(escogeObligatoria(generaLetras()))
 
 
 //Eventos
@@ -143,7 +141,7 @@ $auto.addEventListener('change', function () {
     } else {
         document.getElementById("label4auto").innerHTML = "Manual"
     }
-    
+
     actualizaMensaje($auto.checked)
     document.getElementById("resultadosCheck").innerHTML = ""
 
@@ -162,28 +160,41 @@ $auto.addEventListener('change', function () {
 
 $check.addEventListener("click", function () {
     var letras = []
-    letras [0] = document.getElementById("letraO0").innerText.toLowerCase()
+    letras[0] = document.getElementById("letraO0").innerText.toLowerCase()
     var temp = []
-    for (var i=1; i<7; i++){
-        temp[i-1] = document.getElementById("letraO" + i).innerText.toLowerCase()
+    for (var i = 1; i < 7; i++) {
+        temp[i - 1] = document.getElementById("letraO" + i).innerText.toLowerCase()
     }
     letras.push(temp)
-    console.log("Letra Obli: " + letras[0] + " Letras Opci " +letras[1])
+    console.log("Letra Obli: " + letras[0] + " Letras Opci " + letras[1])
 
-    var mensaje =letrasValidas(letras)
+    var mensaje = letrasValidas(letras)
     console.log("Mensaje : " + mensaje)
 
-    if (mensaje == ""){
+    if (mensaje == "") {
         var temp = buscaPalabras(letras)
         var num1 = numPalabrasTotalesEncontradas(temp)
         var num2 = totalPalabrasHeptas(temp).length
-        console.log ("Palabras: " + num1 + " Heptas " + num2)
+        console.log("Palabras: " + num1 + " Heptas " + num2)
         mensaje = "La combinación proporciona un juego con " + num1 +
-        " palabras válidas y " + num2 + " palabras Hepta"
-        document.getElementById("jugar").disabled=false
+            " palabras válidas y " + num2 + " palabras Hepta"
+        document.getElementById("jugar").disabled = false
     }
-    document.getElementById("resultadosCheck").innerHTML=mensaje
+    document.getElementById("resultadosCheck").innerHTML = mensaje
     console.log("Mensaje " + mensaje)
+})
+
+$jugar.addEventListener("click", function () {
+    document.getElementById("resultadosCheck").innerHTML=""
+    $jugar.disabled = true
+    var letras = []
+    letras[0] = document.getElementById("letraO0").innerText.toLowerCase()
+    var temp = []
+    for (var i = 1; i < 7; i++) {
+        temp[i - 1] = document.getElementById("letraO" + i).innerText.toLowerCase()
+    }
+    letras.push(temp)
+    restart(letras)
 })
 
 function actualizaMensaje(estado) {
@@ -199,20 +210,14 @@ function actualizaMensaje(estado) {
 
 // Main Loop
 
-function restart(mode) {
+function restart(letras) {
     palabra = ""
     minutos = 0
     segundos = 0
-    var letras = []
-    if (mode == "auto") {
-        letras = escogeObligatoria(generaLetras())
-        letraPrincipal = letras[0]
-        letrasOpcionales = letras[1]
-    } else {
-        letraPrincipal = $letraPrincipal.value
-        letrasOpcionales = $letrasOpcionales.value.split("")
-    }
 
+    letraPrincipal = letras[0]
+    letrasOpcionales = letras[1]
+    console.log("Letras: " +letras)
     palabrasHepta = buscaPalabras(letras)
     dibujaHepta(letrasOpcionales.concat([letraPrincipal]))
     listadoPalabras(palabrasHepta)
@@ -233,7 +238,8 @@ function restart(mode) {
 }
 
 function contador() {
-    if (isPaused) return
+    //if (isPaused) return
+    
     segundos++
     if (segundos == 60) {
         segundos = 0
