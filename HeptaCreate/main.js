@@ -35,9 +35,14 @@ const PESOS = new Map(Object.entries(PESOSOBJECT))
 var letraPrincipal = ""
 var letrasOpcionales = []
 var palabrasHepta = {}
-var palabra = ""
+var Heptas
+
+var numPalabras
+var numHeptas
 var numHeptasDescubiertos = 0
 var numPalabrasDescubiertas = 0
+
+var palabra = ""
 var minutos = 0
 var segundos = 0
 var isPaused = false
@@ -69,16 +74,17 @@ function palabraInput(e) {
                     $palabraInput.innerText = "Palabra ya descubierta"
                 } else { //Nueva palabra descubierta !!!
                     temp = palabrasHepta.get(palabra[0])
-                    temp[0] = + result.length //Incrementamos el contador de palabras encontradas
-                    numPalabrasDescubiertas = + result.length
+                    temp[0] += result.length //Incrementamos el contador de palabras encontradas
+                    numPalabrasDescubiertas += result.length
                     temp[3] = temp[3].concat(result)
                     for (var i in result) {
-                        if (esHeptaPalabra(i, letrasOpcionales.concat([letraPrincipal])))
+                        if (Heptas.includes(result[i]))
                             numHeptasDescubiertos++
                     }
                     palabra = ""
                     $palabraInput.innerText = ""
                     listadoPalabras(palabrasHepta)
+                    updateScore()
 
                 }
             } else {
@@ -119,7 +125,11 @@ function letraInput(e, tipo, numLetra) {
 $resolver.addEventListener("click", function () {
     isPaused = true
     for (i of palabrasHepta) {
-        i[1][2].forEach((x) => i[1][3].push("<b>" + x + "</b>"))
+        i[1][2].forEach((x) => {
+            if (! i[1][3].includes(x)){
+                i[1][3].push("<b>" + x + "</b>")
+            }
+        })
     }
     listadoPalabras(palabrasHepta)
 })
@@ -208,6 +218,25 @@ function actualizaMensaje(estado) {
     }
 }
 
+function updateScore(){
+    var temp = "<table class='table table-bordered text-start'><tr><td>Palabras Encontradas</td>"
+    + "<td>" + numPalabrasDescubiertas + "/" + numPalabras + "</td>"
+    + "<td>" + (numPalabrasDescubiertas/numPalabras*100).toFixed() + "%</td></tr>"
+    
+    var i = ""
+    if (numHeptas == 0)
+        i = "0"
+    else
+        i = (numHeptasDescubiertos/numHeptas*100).toFixed()
+
+    temp = temp + "<tr><td>Heptas Encontrados</td>"
+    + "<td>" + numHeptasDescubiertos + "/" + numHeptas + "</td>"
+    + "<td>" + i + "%</td></tr></table>"
+
+    $score.innerHTML = temp
+    console.log(typeof (numPalabrasDescubiertas) + "    " + temp)
+}
+
 // Main Loop
 
 function restart(letras) {
@@ -217,28 +246,21 @@ function restart(letras) {
 
     letraPrincipal = letras[0]
     letrasOpcionales = letras[1]
-    console.log("Letras: " +letras)
     palabrasHepta = buscaPalabras(letras)
     dibujaHepta(letrasOpcionales.concat([letraPrincipal]))
     listadoPalabras(palabrasHepta)
 
-    var totalPalabras = 0
-    var numHeptas = 0
-    for (var i of palabrasHepta) {
-        totalPalabras += i[1][1]
-        for (var j = 0; j < (i[1][2]).length; j++) {
-            if (esHeptaPalabra(i[1][2][j], letras[1].concat(letras[0])))
-                numHeptas++
-        }
-    }
+    numPalabras = numPalabrasTotalesEncontradas(palabrasHepta)
+    Heptas = totalPalabrasHeptas(palabrasHepta)
+    numHeptas = Heptas.length
 
-    $score.innerText = "0/" + numHeptas + "/" + totalPalabras
+    updateScore()
 
     setInterval(contador, 1000)
 }
 
 function contador() {
-    //if (isPaused) return
+    if (isPaused) return
     
     segundos++
     if (segundos == 60) {

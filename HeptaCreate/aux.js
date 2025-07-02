@@ -135,9 +135,18 @@ function listadoPalabras(datos) {
         if (i[1][1] == 0) {
             continue //No hay palabras que comiencen por esta letra
         }
+
+        var temp = []
+        i[1][3].forEach((x) =>{
+            if (Heptas.includes(x))
+                temp.push("<b style='color: blue;'>"+x+"</b>")
+            else
+                temp.push(x)
+        })
+
         text = text + "<tr><td class='text-start'>Palabras que empiezan con <b>" + i[0].toUpperCase() +
             "</b> " + i[1][0] + "/" + i[1][1] + ": </td><td>"
-        i[1][3].forEach((x) => text = text + x + ", ")
+        temp.forEach((x) => text = text + x + ", ")
         text = text + "</td></tr>"
     }
 

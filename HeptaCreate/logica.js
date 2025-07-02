@@ -39,7 +39,6 @@ function escogeObligatoria(letras) {
 }
 
 function buscaPalabras(letras) {
-    console.log("Obligatoria: " +letras[0] +" Opcionales: " +letras[1])
     var obligatoria = acentua(letras[0]) //Si es una vocal añadimos el acento a la lista
     var prohibidas = anadeVocalesAcentuadas(opuestas(letras[1], letras[0])) //letras que NO pueden aparecer. 
     //Incluyendo las vocales acentuadas en su caso
@@ -121,12 +120,9 @@ function totalPalabrasHeptas(struct){
     for (var i of struct){ // Cada letra inicial
         letras.push(i[0])
     }
-    console.log(letras)
 
     for (var i in letras){
-        console.log("Recorriendo: " + letras[i])
         for (var j of struct.get(letras[i])[2]){// Cada palabra 
-            console.log("palabra " + j)
             if (esHeptaPalabra(desacentua(j), letras))
                 ret.push(j)
         }
