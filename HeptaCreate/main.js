@@ -17,8 +17,7 @@ const HANCHO = 75
 const LETTERSIZE = 30
 
 //ID's del Modal
-const $generar = document.getElementById("generar")
-const $resolver = document.getElementById("resolver")
+const $modal = document.getElementById("generaModal")
 const $auto = document.getElementById("auto")
 const $check = document.getElementById("check")
 const $jugar = document.getElementById("jugar")
@@ -30,6 +29,8 @@ const $palabras = document.getElementById("palabras")
 const $palabraInput = document.getElementById("palabraInput")
 const $score = document.getElementById("score")
 const $crono = document.getElementById("crono")
+const $generar = document.getElementById("generar")
+const $resolver = document.getElementById("resolver")
 
 const PESOS = new Map(Object.entries(PESOSOBJECT))
 var letraPrincipal = ""
@@ -124,14 +125,46 @@ function letraInput(e, tipo, numLetra) {
 
 $resolver.addEventListener("click", function () {
     isPaused = true
-    for (i of palabrasHepta) {
-        i[1][2].forEach((x) => {
-            if (! i[1][3].includes(x)){
-                i[1][3].push("<b>" + x + "</b>")
-            }
+
+    var print = "<table class='table table-striped'>"
+
+    for (var i of palabrasHepta) {
+        if (i[1][1] == 0) {
+            continue //No hay palabras que comiencen por esta letra
+        }
+
+        var temp = []
+        i[1][2].forEach((x) => temp.push(x)) //Añadimos las palabras ya encontradas
+        i[1][3].forEach((x) => {
+            if (!i[1][2].includes(x))
+                temp.push(x)                //Añadimos las palabras NO encontradas 
         })
+
+        temp.sort() //Ordenamos la lista
+
+        print = print + "<tr><td class='text-start'>Palabras que empiezan con <b>" + i[0].toUpperCase() +
+            "</b> " + i[1][0] + "/" + i[1][1] + ": </td><td class='text-start'>"
+
+        temp.forEach((x) => {
+            var inicio = ""
+            var fin = ""
+            if (! i[1][3].includes(x)){ //Palabra no encontrada va en negrita
+                inicio = "<b>"
+                fin ="</b>"
+                if (Heptas.includes(x)) //Además de encontrada es Hepta va en negrita y rojo
+                    inicio = "<b style='color: red;'>"
+            } else { //Palabra ya encontrada
+                if (Heptas.includes(x)){
+                    inicio = "<b style='color: blue;'>"
+                    fin = "</b>"
+                }
+            }
+            print = print + inicio + x + fin + ", "
+        })
+        print = print + "</td></tr>"
     }
-    listadoPalabras(palabrasHepta)
+    console.log(print + "</table>")
+    $palabras.innerHTML = print + "</table>"
 })
 
 $generar.addEventListener("click", function () {
@@ -143,6 +176,8 @@ $generar.addEventListener("click", function () {
             document.getElementById("letraO" + i).innerHTML = letras[1][i - 1].toUpperCase()
         }
     }
+    const myModal = new bootstrap.Modal($modal)
+    myModal.toggle()
 })
 
 $auto.addEventListener('change', function () {
@@ -192,7 +227,7 @@ $check.addEventListener("click", function () {
 })
 
 $jugar.addEventListener("click", function () {
-    document.getElementById("resultadosCheck").innerHTML=""
+    document.getElementById("resultadosCheck").innerHTML = ""
     $jugar.disabled = true
     var letras = []
     letras[0] = document.getElementById("letraO0").innerText.toLowerCase()
@@ -215,20 +250,20 @@ function actualizaMensaje(estado) {
     }
 }
 
-function updateScore(){
+function updateScore() {
     var temp = "<table class='table table-bordered text-start'><tr><td>Palabras Encontradas</td>"
-    + "<td>" + numPalabrasDescubiertas + "/" + numPalabras + "</td>"
-    + "<td>" + (numPalabrasDescubiertas/numPalabras*100).toFixed() + "%</td></tr>"
-    
+        + "<td>" + numPalabrasDescubiertas + "/" + numPalabras + "</td>"
+        + "<td>" + (numPalabrasDescubiertas / numPalabras * 100).toFixed() + "%</td></tr>"
+
     var i = ""
     if (numHeptas == 0)
         i = "0"
     else
-        i = (numHeptasDescubiertos/numHeptas*100).toFixed()
+        i = (numHeptasDescubiertos / numHeptas * 100).toFixed()
 
     temp = temp + "<tr><td>Heptas Encontrados</td>"
-    + "<td>" + numHeptasDescubiertos + "/" + numHeptas + "</td>"
-    + "<td>" + i + "%</td></tr></table>"
+        + "<td>" + numHeptasDescubiertos + "/" + numHeptas + "</td>"
+        + "<td>" + i + "%</td></tr></table>"
 
     $score.innerHTML = temp
 }
@@ -257,7 +292,7 @@ function restart(letras) {
 
 function contador() {
     if (isPaused) return
-    
+
     segundos++
     if (segundos == 60) {
         segundos = 0

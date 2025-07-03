@@ -31,3 +31,7 @@
     min-height: 45px;
     max-height: 45px;
 }
+
+td {
+    word-wrap: break-word;
+}

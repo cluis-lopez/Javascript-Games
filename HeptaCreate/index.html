@@ -14,7 +14,7 @@
 <body>
     <div class="container">
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" data-bs-toggle="modal" data-bs-target="#introModal">
+            <a class="navbar-brand">
                 <img src="logo.png" alt="logo" width="250">
             </a>
         </nav>
@@ -26,8 +26,8 @@
 
         <div class="container text-center mensajes">
             <div class="row">
-                <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="generar"
-                        data-bs-toggle="modal" data-bs-target="#generaModal">Generar</button>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary btn-lg" id="generar">Generar</button>
                 </div>
                 <div class="col-3"></div>
                 <div class="col"><button type="button" class="btn btn-secondary btn-lg" id="resolver">Resolver</button>
@@ -45,10 +45,6 @@
                     <span class="scoring" id="crono">00:00</span>
                 </div>
                 <div class="col-6">
-                    <!--
-                    <input type="text" id="palabraInput" class="form-control align-center letrasP" maxlength="24"
-                        oninput="palabraInput(event)">
-                -->
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary align-center palabraInput" type="button" id="palabraInput"
                             onkeydown="palabraInput(event)"></button>
@@ -79,7 +75,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                        <h1 class="modal-title fs-5">Crear Nuevo Juego</h1>
+                    <h1 class="modal-title fs-5">Crear Nuevo Juego</h1>
                 </div>
 
                 <div class="modal-body">
@@ -124,10 +120,20 @@
                 <div class="modal-body" id="resultadosCheck">
 
                 </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="check">Check</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="jugar" disabled="true">Jugar</button>
+
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="p-2">
+                            <button type="button" class="btn btn-secondary" id="check">Check</button>
+                        </div>
+                        <div class="p-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Salir</button>
+                        </div>
+                        <div class="p-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="jugar"
+                                disabled="true">Jugar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
