@@ -165,6 +165,7 @@ $resolver.addEventListener("click", function () {
     }
     console.log(print + "</table>")
     $palabras.innerHTML = print + "</table>"
+    $palabraInput.disabled = true
 })
 
 $generar.addEventListener("click", function () {
@@ -288,6 +289,9 @@ function restart(letras) {
     numHeptas = Heptas.length
 
     updateScore()
+
+    $palabraInput.disabled = false
+    isPaused = false
 
     setInterval(contador, 1000)
 }
