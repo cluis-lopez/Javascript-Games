@@ -176,6 +176,8 @@ $generar.addEventListener("click", function () {
             document.getElementById("letraO" + i).innerHTML = letras[1][i - 1].toUpperCase()
         }
     }
+    document.getElementById("resultadosCheck").innerHTML=""
+    $jugar.disabled = true
     const myModal = new bootstrap.Modal($modal)
     myModal.toggle()
 })
