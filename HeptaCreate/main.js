@@ -46,9 +46,10 @@ var numPalabrasDescubiertas = 0
 var palabra = ""
 var minutos = 0
 var segundos = 0
-var isPaused = false
+var isPaused = true
 
 restart(escogeObligatoria(generaLetras()))
+var timer = setInterval(contador, 1000)
 
 
 //Eventos
@@ -148,13 +149,13 @@ $resolver.addEventListener("click", function () {
         temp.forEach((x) => {
             var inicio = ""
             var fin = ""
-            if (! i[1][3].includes(x)){ //Palabra no encontrada va en negrita
+            if (!i[1][3].includes(x)) { //Palabra no encontrada va en negrita
                 inicio = "<b>"
-                fin ="</b>"
+                fin = "</b>"
                 if (Heptas.includes(x)) //Además de encontrada es Hepta va en negrita y rojo
                     inicio = "<b style='color: red;'>"
             } else { //Palabra ya encontrada
-                if (Heptas.includes(x)){
+                if (Heptas.includes(x)) {
                     inicio = "<b style='color: blue;'>"
                     fin = "</b>"
                 }
@@ -177,7 +178,7 @@ $generar.addEventListener("click", function () {
             document.getElementById("letraO" + i).innerHTML = letras[1][i - 1].toUpperCase()
         }
     }
-    document.getElementById("resultadosCheck").innerHTML=""
+    document.getElementById("resultadosCheck").innerHTML = ""
     $jugar.disabled = true
     const myModal = new bootstrap.Modal($modal)
     myModal.toggle()
@@ -278,6 +279,8 @@ function restart(letras) {
     palabra = ""
     minutos = 0
     segundos = 0
+    numHeptasDescubiertos = 0
+    numPalabrasDescubiertas = 0
 
     letraPrincipal = letras[0]
     letrasOpcionales = letras[1]
@@ -293,8 +296,6 @@ function restart(letras) {
 
     $palabraInput.disabled = false
     isPaused = false
-
-    setInterval(contador, 1000)
 }
 
 function contador() {
