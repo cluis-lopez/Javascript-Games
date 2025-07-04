@@ -192,12 +192,13 @@ $auto.addEventListener('change', function () {
 
     actualizaMensaje($auto.checked)
     document.getElementById("resultadosCheck").innerHTML = ""
+    $jugar.disabled = true
 
     if ($auto.checked) { //En el modo automatico generamos las letras
         var letras = escogeObligatoria(generaLetras())
-        document.getElementById("letraO0").innerHTML = letras[0]
+        document.getElementById("letraO0").innerHTML = letras[0].toUpperCase()
         for (var i = 1; i < 7; i++) {
-            document.getElementById("letraO" + i).innerHTML = letras[1][i - 1]
+            document.getElementById("letraO" + i).innerHTML = letras[1][i - 1].toUpperCase()
         }
     } else { //Hemos pasado al modo manual asi que borramos las letras
         for (var i = 0; i < 7; i++) {
