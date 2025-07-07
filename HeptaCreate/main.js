@@ -21,6 +21,7 @@ const $modal = document.getElementById("generaModal")
 const $auto = document.getElementById("auto")
 const $check = document.getElementById("check")
 const $jugar = document.getElementById("jugar")
+const $revolver = document.getElementById("revolver")
 
 //ID's pagina principal
 const $canvas = document.getElementById("principal");
@@ -164,9 +165,13 @@ $resolver.addEventListener("click", function () {
         })
         print = print + "</td></tr>"
     }
-    console.log(print + "</table>")
     $palabras.innerHTML = print + "</table>"
     $palabraInput.disabled = true
+    $revolver.disabled = true
+})
+
+$revolver.addEventListener("click", function(){
+    dibujaHepta((reordena(letrasOpcionales)).concat([letraPrincipal]))
 })
 
 $generar.addEventListener("click", function () {
@@ -295,6 +300,7 @@ function restart(letras) {
     updateScore()
 
     $palabraInput.disabled = false
+    $revolver.disabled= false
     isPaused = false
 }
 
