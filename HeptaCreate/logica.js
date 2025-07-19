@@ -47,8 +47,8 @@ function buscaPalabras(letras) {
     //Nos quedamos solo con las palabras que contengan la letra obligatoria y tengan 3 o más letras
     rae_dict.forEach((x) => {
         for (var i in obligatoria) {
-            if (x.toLowerCase().includes(obligatoria[i]) && x.length > 2) { 
-                temp.push(x); break 
+            if (x.toLowerCase().includes(obligatoria[i]) && x.length > 2) {
+                temp.push(x); break
             }
         }
     })
@@ -144,4 +144,36 @@ function letrasValidas(let) {
             return "Alguna letra esta repetida"
     }
     return ""
+}
+
+function registrar() {
+    //Delvuelve estructura con los datos del juego
+    var ret = {}
+    ret["Fecha"] = new Date().toISOString()
+    var time = minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0')
+    ret["Tiempo"] = time
+    ret["LetraObligatoria"] = letraPrincipal
+    ret["LetrasOpcionales"] = letrasOpcionales
+    ret["PalabrasDescubiertas"] = numPalabrasDescubiertas
+    ret["PalabrasTotales"] = numPalabras
+    ret["HeptasDescubiertos"] = numHeptasDescubiertos
+    ret["HeptasTotales"] = numHeptas
+    var temp = []
+    for (var i of palabrasHepta) {
+        if (i[1][1] == 0) {
+            continue //No hay palabras que comiencen por esta letra
+        }
+        i[1][3].forEach((x) => temp.push(x)) //Añadimos las palabras ya encontradas
+    }
+    ret["PalabrasEncontradas"] = temp
+    console.log(ret)
+
+    var history = JSON.parse(localStorage.getItem("gameHistory"))
+    if (history == null) { //First store
+        history = [ret]
+    } else { //already results saved
+        history.push(ret)
+    }
+    console.log(history)
+    localStorage.setItem("gameHistory", JSON.stringify(history))
 }

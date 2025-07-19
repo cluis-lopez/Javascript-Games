@@ -11,17 +11,22 @@ const PESOSOBJECT = {
     "t": 0.05432125607943799, "u": 0.031926548567954606, "v": 0.009804149216427992, "w": 0.00008760301269927046,
     "x": 0.0018122213590921372, "y": 0.001745727506079438, "z": 0.007700621453661172
 }
+const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 const NUMLETRAS = 7 // Heptagrama :-)
 const HEPTAWIDTH = 300
 const HANCHO = 75
 const LETTERSIZE = 30
 
-//ID's del Modal
-const $modal = document.getElementById("generaModal")
+//ID's del Modal Generar
+const $generaModal = document.getElementById("generaModal")
 const $auto = document.getElementById("auto")
 const $check = document.getElementById("check")
 const $jugar = document.getElementById("jugar")
 const $revolver = document.getElementById("revolver")
+
+//ID's del Modal Resultados
+const $resultadosModal = document.getElementById("resultadosModal")
+const $resultadosContent = document.getElementById("resultadosContent")
 
 //ID's pagina principal
 const $canvas = document.getElementById("principal");
@@ -32,6 +37,7 @@ const $score = document.getElementById("score")
 const $crono = document.getElementById("crono")
 const $generar = document.getElementById("generar")
 const $resolver = document.getElementById("resolver")
+const $resultados = document.getElementById("resultados")
 
 const PESOS = new Map(Object.entries(PESOSOBJECT))
 var letraPrincipal = ""
@@ -165,12 +171,13 @@ $resolver.addEventListener("click", function () {
         })
         print = print + "</td></tr>"
     }
+    registrar()
     $palabras.innerHTML = print + "</table>"
     $palabraInput.disabled = true
     $revolver.disabled = true
 })
 
-$revolver.addEventListener("click", function(){
+$revolver.addEventListener("click", function () {
     dibujaHepta((reordena(letrasOpcionales)).concat([letraPrincipal]))
 })
 
@@ -185,7 +192,7 @@ $generar.addEventListener("click", function () {
     }
     document.getElementById("resultadosCheck").innerHTML = ""
     $jugar.disabled = true
-    const myModal = new bootstrap.Modal($modal)
+    const myModal = new bootstrap.Modal($generaModal)
     myModal.toggle()
 })
 
@@ -278,6 +285,71 @@ function updateScore() {
     $score.innerHTML = temp
 }
 
+//Modal Resultados
+
+$resultados.addEventListener("click", function () {
+    const myModal = new bootstrap.Modal($resultadosModal)
+    myModal.toggle()
+    isPaused = true
+
+    var historico = JSON.parse(localStorage.getItem("gameHistory"))
+    if (historico == null) {
+        $resultadosContent.innerHTML = "<tr><td colspan='5'>No hay resultados almacenados</td></tr>"
+    } else {
+        for (var juego in historico) {
+            $resultadosContent.append(nuevaLinea(historico[juego]))
+        }
+    }
+
+    function nuevaLinea(juego) {
+        var ret = document.createElement("tr")
+        //Fecha
+        var cell = document.createElement("td")
+        var temp = new Date(juego["Fecha"])
+        cell.innerHTML = temp.getDate() + "-" + MESES[temp.getMonth()] + "-" + temp.getFullYear()
+        ret.appendChild(cell)
+        //Tiempo
+        cell = document.createElement("td")
+        cell.innerHTML = juego["Tiempo"]
+        ret.appendChild(cell)
+        //Letras
+        cell = document.createElement("td")
+        cell.innerHTML = "<b>" + juego["LetraObligatoria"].toUpperCase() + "</b>" + array2str(juego["LetrasOpcionales"]).toUpperCase()
+        ret.appendChild(cell)
+        //Encontradas
+        cell = document.createElement("td")
+        var desc = juego["PalabrasDescubiertas"]
+        var tot = juego["PalabrasTotales"]
+        cell.innerHTML = desc + "/" + tot + "  "
+        ret.appendChild(cell)
+        cell = document.createElement("td")
+        cell.innerHTML = (desc / tot * 100).toFixed() + "%"
+        ret.appendChild(cell)
+        //Heptas
+        cell = document.createElement("td")
+        desc = juego["HeptasDescubiertos"]
+        tot = juego["HeptasTotales"]
+        cell.innerHTML = desc + "/" + tot + "  "
+        ret.appendChild(cell)
+        cell = document.createElement("td")
+        if (tot != 0) {
+            cell.innerHTML = (desc / tot * 100).toFixed() + "%"
+        } else {
+            cell.innerHTML = "0%"
+        }
+        ret.appendChild(cell)
+
+        return ret
+    }
+})
+
+$resultadosModal.addEventListener("hidden.bs.modal", function () {
+    isPaused = false
+    while ($resultadosContent.firstChild) {
+        $resultadosContent.removeChild($resultadosContent.lastChild)
+    }
+});
+
 // Main Loop
 
 function restart(letras) {
@@ -300,7 +372,7 @@ function restart(letras) {
     updateScore()
 
     $palabraInput.disabled = false
-    $revolver.disabled= false
+    $revolver.disabled = false
     isPaused = false
 }
 
