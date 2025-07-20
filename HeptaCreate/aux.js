@@ -107,6 +107,19 @@ function totalElementos(array) {
     return result
 }
 
+function ultimosElementos(lista, numero) {//Devuelve los últimos x elementos de la lista (si los hay)
+    var ret = []
+    var index = lista.length - 1
+    while (lista[index] != undefined) {
+        ret.push(lista[index])
+        index--
+        if (ret.length > numero)
+            break
+    }
+    return ret
+
+}
+
 function weighted_random(items, weights) {
     var i;
 
@@ -137,9 +150,9 @@ function listadoPalabras(datos) {
         }
 
         var temp = []
-        i[1][3].forEach((x) =>{
+        i[1][3].forEach((x) => {
             if (Heptas.includes(x))
-                temp.push("<b style='color: blue;'>"+x+"</b>")
+                temp.push("<b style='color: blue;'>" + x + "</b>")
             else
                 temp.push(x)
         })
@@ -242,4 +255,41 @@ function dibujaHepta(letras) {
     function g2r(grados) {
         return grados * Math.PI / 180
     }
+}
+
+function nuevaLineaResultados(juego) {
+    var ret = document.createElement("tr")
+    //Fecha
+    var cell = document.createElement("td")
+    var temp = new Date(juego["Fecha"])
+    cell.innerHTML = temp.getDate() + "-" + MESES[temp.getMonth()] + "-" + temp.getFullYear()
+    ret.appendChild(cell)
+    //Tiempo
+    cell = document.createElement("td")
+    cell.innerHTML = juego["Tiempo"]
+    ret.appendChild(cell)
+    //Letras
+    cell = document.createElement("td")
+    cell.innerHTML = "<b>" + juego["LetraObligatoria"].toUpperCase() + "</b>" + array2str(juego["LetrasOpcionales"]).toUpperCase()
+    ret.appendChild(cell)
+    //Encontradas
+    cell = document.createElement("td")
+    var desc = juego["PalabrasDescubiertas"]
+    var tot = juego["PalabrasTotales"]
+    cell.innerHTML = desc + "/" + tot + "  "
+    ret.appendChild(cell)
+    cell = document.createElement("td")
+    cell.innerHTML = (juego["percentPalabras"] * 100).toFixed() + "%"
+    ret.appendChild(cell)
+    //Heptas
+    cell = document.createElement("td")
+    desc = juego["HeptasDescubiertos"]
+    tot = juego["HeptasTotales"]
+    cell.innerHTML = desc + "/" + tot + "  "
+    ret.appendChild(cell)
+    cell = document.createElement("td")
+    cell.innerHTML = (juego["percentHeptas"] * 100).toFixed() + "%"
+    ret.appendChild(cell)
+
+    return ret
 }

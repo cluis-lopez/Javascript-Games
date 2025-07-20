@@ -27,6 +27,7 @@ const $revolver = document.getElementById("revolver")
 //ID's del Modal Resultados
 const $resultadosModal = document.getElementById("resultadosModal")
 const $resultadosContent = document.getElementById("resultadosContent")
+const $resultadosTitulo = document.getElementById("resultadosTitulo")
 
 //ID's pagina principal
 const $canvas = document.getElementById("principal");
@@ -86,6 +87,7 @@ function palabraInput(e) {
                     temp[0] += result.length //Incrementamos el contador de palabras encontradas
                     numPalabrasDescubiertas += result.length
                     temp[3] = temp[3].concat(result)
+                    temp[3].sort()
                     for (var i in result) {
                         if (Heptas.includes(result[i]))
                             numHeptasDescubiertos++
@@ -294,53 +296,15 @@ $resultados.addEventListener("click", function () {
 
     var historico = JSON.parse(localStorage.getItem("gameHistory"))
     if (historico == null) {
-        $resultadosContent.innerHTML = "<tr><td colspan='5'>No hay resultados almacenados</td></tr>"
+        $resultadosContent.innerHTML = "<tr><td colspan='7'><b>No hay resultados almacenados</b></td></tr>"
     } else {
+        historico = ultimos10Juegos(historico)
         for (var juego in historico) {
-            $resultadosContent.append(nuevaLinea(historico[juego]))
+            $resultadosContent.append(nuevaLineaResultados(historico[juego]))
         }
     }
 
-    function nuevaLinea(juego) {
-        var ret = document.createElement("tr")
-        //Fecha
-        var cell = document.createElement("td")
-        var temp = new Date(juego["Fecha"])
-        cell.innerHTML = temp.getDate() + "-" + MESES[temp.getMonth()] + "-" + temp.getFullYear()
-        ret.appendChild(cell)
-        //Tiempo
-        cell = document.createElement("td")
-        cell.innerHTML = juego["Tiempo"]
-        ret.appendChild(cell)
-        //Letras
-        cell = document.createElement("td")
-        cell.innerHTML = "<b>" + juego["LetraObligatoria"].toUpperCase() + "</b>" + array2str(juego["LetrasOpcionales"]).toUpperCase()
-        ret.appendChild(cell)
-        //Encontradas
-        cell = document.createElement("td")
-        var desc = juego["PalabrasDescubiertas"]
-        var tot = juego["PalabrasTotales"]
-        cell.innerHTML = desc + "/" + tot + "  "
-        ret.appendChild(cell)
-        cell = document.createElement("td")
-        cell.innerHTML = (desc / tot * 100).toFixed() + "%"
-        ret.appendChild(cell)
-        //Heptas
-        cell = document.createElement("td")
-        desc = juego["HeptasDescubiertos"]
-        tot = juego["HeptasTotales"]
-        cell.innerHTML = desc + "/" + tot + "  "
-        ret.appendChild(cell)
-        cell = document.createElement("td")
-        if (tot != 0) {
-            cell.innerHTML = (desc / tot * 100).toFixed() + "%"
-        } else {
-            cell.innerHTML = "0%"
-        }
-        ret.appendChild(cell)
 
-        return ret
-    }
 })
 
 $resultadosModal.addEventListener("hidden.bs.modal", function () {

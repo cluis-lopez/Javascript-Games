@@ -1,7 +1,7 @@
 //Logica
 function generaLetras() {
     var letras = []
-    var numVocales = 2 + Math.floor(Math.random() * 2) //NumVocales entre 2 y 3
+    var numVocales = 2 + Math.floor(Math.random() * 3) //NumVocales entre 2 y 4
     var numConsonantes = NUMLETRAS - numVocales
     var vocales = [...VOCALES]
     var consonantes = [...CONSONANTES]
@@ -156,8 +156,19 @@ function registrar() {
     ret["LetrasOpcionales"] = letrasOpcionales
     ret["PalabrasDescubiertas"] = numPalabrasDescubiertas
     ret["PalabrasTotales"] = numPalabras
+    if (numPalabras > 0) {
+        ret["percentPalabras"] = numPalabrasDescubiertas / numPalabras
+    } else {
+        ret["percentPalabras"] = 0
+    }
     ret["HeptasDescubiertos"] = numHeptasDescubiertos
     ret["HeptasTotales"] = numHeptas
+    if (
+        numHeptas > 0) {
+        ret["percentHeptas"] = numHeptasDescubiertos / numHeptas 
+    } else {
+        ret["percentHeptas"] = 0
+    }
     var temp = []
     for (var i of palabrasHepta) {
         if (i[1][1] == 0) {
@@ -176,4 +187,34 @@ function registrar() {
     }
     console.log(history)
     localStorage.setItem("gameHistory", JSON.stringify(history))
+}
+
+function ultimos10Juegos(juegos) { //Devuelve los últimos 10 elementos de la lista (si los hay)
+    while ($resultadosContent.firstChild) {
+        $resultadosContent.removeChild($resultadosContent.lastChild)
+    }
+    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 últimas jugadas"
+    return ultimosElementos(juegos, 10)
+}
+
+function masPalabrasEncontradas(juegos) { //Devuelve los 10 mejores resultados por palabras encontradas
+    while ($resultadosContent.firstChild) {
+        $resultadosContent.removeChild($resultadosContent.lastChild)
+    }
+    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de palabras encontradas"
+    for (var i in juegos) {
+        juegos.sort(function (a, ab) { return a["percentPalabras"] - b["percentPalabras"] })
+        return ultimosElementos(juegos, 10)
+    }
+}
+
+function masHeptasEncontradas(juegos) { //Devuelve los 10 mejores resultados por palabras encontradas
+    while ($resultadosContent.firstChild) {
+        $resultadosContent.removeChild($resultadosContent.lastChild)
+    }
+    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de Heptas encontrados"
+    for (var i in juegos) {
+        juegos.sort(function (a, ab) { return a["percentHeptas"] - b["percentHeptas"] })
+        return ultimosElementos(juegos, 10)
+    }
 }
