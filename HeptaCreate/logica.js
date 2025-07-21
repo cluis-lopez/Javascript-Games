@@ -188,33 +188,3 @@ function registrar() {
     console.log(history)
     localStorage.setItem("gameHistory", JSON.stringify(history))
 }
-
-function ultimos10Juegos(juegos) { //Devuelve los últimos 10 elementos de la lista (si los hay)
-    while ($resultadosContent.firstChild) {
-        $resultadosContent.removeChild($resultadosContent.lastChild)
-    }
-    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 últimas jugadas"
-    return ultimosElementos(juegos, 10)
-}
-
-function masPalabrasEncontradas(juegos) { //Devuelve los 10 mejores resultados por palabras encontradas
-    while ($resultadosContent.firstChild) {
-        $resultadosContent.removeChild($resultadosContent.lastChild)
-    }
-    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de palabras encontradas"
-    for (var i in juegos) {
-        juegos.sort(function (a, ab) { return a["percentPalabras"] - b["percentPalabras"] })
-        return ultimosElementos(juegos, 10)
-    }
-}
-
-function masHeptasEncontradas(juegos) { //Devuelve los 10 mejores resultados por palabras encontradas
-    while ($resultadosContent.firstChild) {
-        $resultadosContent.removeChild($resultadosContent.lastChild)
-    }
-    $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de Heptas encontrados"
-    for (var i in juegos) {
-        juegos.sort(function (a, ab) { return a["percentHeptas"] - b["percentHeptas"] })
-        return ultimosElementos(juegos, 10)
-    }
-}

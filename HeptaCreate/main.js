@@ -293,19 +293,41 @@ $resultados.addEventListener("click", function () {
     const myModal = new bootstrap.Modal($resultadosModal)
     myModal.toggle()
     isPaused = true
+    ordenaResultados('fecha')
+})
 
+function ordenaResultados(modo) {
+    while ($resultadosContent.firstChild) { //Limpiamos tabla
+        $resultadosContent.removeChild($resultadosContent.lastChild)
+    }
     var historico = JSON.parse(localStorage.getItem("gameHistory"))
     if (historico == null) {
         $resultadosContent.innerHTML = "<tr><td colspan='7'><b>No hay resultados almacenados</b></td></tr>"
-    } else {
-        historico = ultimos10Juegos(historico)
-        for (var juego in historico) {
-            $resultadosContent.append(nuevaLineaResultados(historico[juego]))
-        }
+        return
     }
 
+    //Hay resultados almacenados
 
-})
+    switch (modo) {
+        case 'fecha':
+            $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 últimas jugadas"
+            historico = ultimosElementos(historico,10)
+            break
+        case 'palabra':
+            $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de palabras encontradas"
+            historico.sort(function (a, b) { return a["percentPalabras"] - b["percentPalabras"] })
+            historico = ultimosElementos(historico,10)
+            break
+        case 'heptas':
+            $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de Heptas encontrados"
+            historico.sort(function (a, b) { return a["percentHeptas"] - b["percentHeptas"] })
+            historico = ultimosElementos(historico,10)
+            break
+    }
+    for (var juego in historico) {
+        $resultadosContent.append(nuevaLineaResultados(historico[juego]))
+    }
+}
 
 $resultadosModal.addEventListener("hidden.bs.modal", function () {
     isPaused = false
