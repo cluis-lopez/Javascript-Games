@@ -39,6 +39,7 @@ const $crono = document.getElementById("crono")
 const $generar = document.getElementById("generar")
 const $resolver = document.getElementById("resolver")
 const $resultados = document.getElementById("resultados")
+const $pause = document.getElementById("pause")
 
 const PESOS = new Map(Object.entries(PESOSOBJECT))
 var letraPrincipal = ""
@@ -181,6 +182,16 @@ $resolver.addEventListener("click", function () {
 
 $revolver.addEventListener("click", function () {
     dibujaHepta((reordena(letrasOpcionales)).concat([letraPrincipal]))
+})
+
+$pause.addEventListener("click", function(){
+    isPaused = !isPaused
+
+    if (isPaused) {//Pausamos el juego
+        $palabraInput.disabled = true
+    } else { //Rearrancamos
+        $palabraInput.disabled = false
+    }
 })
 
 $generar.addEventListener("click", function () {
