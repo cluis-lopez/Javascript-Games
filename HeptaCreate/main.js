@@ -56,6 +56,7 @@ var palabra = ""
 var minutos = 0
 var segundos = 0
 var isPaused = true
+var resultadosPause = isPaused
 
 restart(escogeObligatoria(generaLetras()))
 var timer = setInterval(contador, 1000)
@@ -303,6 +304,7 @@ function updateScore() {
 $resultados.addEventListener("click", function () {
     const myModal = new bootstrap.Modal($resultadosModal)
     myModal.toggle()
+    resultadosPause = isPaused
     isPaused = true
     ordenaResultados('fecha')
 })
@@ -341,7 +343,7 @@ function ordenaResultados(modo) {
 }
 
 $resultadosModal.addEventListener("hidden.bs.modal", function () {
-    isPaused = false
+    isPaused = resultadosPause
     while ($resultadosContent.firstChild) {
         $resultadosContent.removeChild($resultadosContent.lastChild)
     }
