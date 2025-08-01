@@ -169,88 +169,61 @@ function listadoPalabras(datos) {
 function dibujaHepta(letras) {
     $ctx.resetTransform()
     $ctx.clearRect(0, 0, $canvas.width, $canvas.height)
-    $ctx.fillStyle = "rgb(200 200 200)";
-    $ctx.lineWidth = 5
     $ctx.translate(10, 10)
+    var gap = LETTERSIZE / 3
 
     var p1 = HEPTAWIDTH / 2 * Math.sin(g2r(30))
     var p2 = HEPTAWIDTH - p1
     var p3 = p2 - HANCHO * Math.sin(g2r(30))
     var p4 = p1 + HANCHO * Math.sin(g2r(30))
 
-    //Arriba
-    $ctx.beginPath();
-    $ctx.moveTo(p1, 0)
-    $ctx.lineTo(p2, 0);
-    $ctx.lineTo(p3, HANCHO);
-    $ctx.lineTo(p4, HANCHO)
-    $ctx.lineTo(p1, 0)
-    $ctx.stroke()
-    $ctx.fill();
+    const zonas = {
+        "Arriba": [[[p1, 0], [p2, 0], [p3, HANCHO], [p4, HANCHO], [p1, 0]],
+        [letras[0], HEPTAWIDTH / 2 - gap, HANCHO / 2 + gap]],
 
-    //Arriba derecha
-    $ctx.beginPath();
-    $ctx.moveTo(p2, 0)
-    $ctx.lineTo(HEPTAWIDTH, HEPTAWIDTH / 2)
-    $ctx.lineTo(HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2)
-    $ctx.lineTo(p3, HANCHO)
-    $ctx.lineTo(p2, 0)
-    $ctx.stroke()
-    $ctx.fill()
+        "ArribaDerecha": [[[p2, 0], [HEPTAWIDTH, HEPTAWIDTH / 2], [HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2],
+        [p3, HANCHO], [p2, 0]],
+        [letras[1], p3 + HANCHO / 2, HEPTAWIDTH / 3 + gap]],
 
-    //Abajo derecha
-    $ctx.beginPath();
-    $ctx.moveTo(HEPTAWIDTH, HEPTAWIDTH / 2)
-    $ctx.lineTo(p2, HEPTAWIDTH)
-    $ctx.lineTo(p3, HEPTAWIDTH - HANCHO)
-    $ctx.lineTo(HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2)
-    $ctx.lineTo(HEPTAWIDTH, HEPTAWIDTH / 2)
-    $ctx.stroke()
-    $ctx.fill()
+        "AbajoDerecha": [[[HEPTAWIDTH, HEPTAWIDTH / 2], [p2, HEPTAWIDTH], [p3, HEPTAWIDTH - HANCHO],
+        [HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2], [HEPTAWIDTH, HEPTAWIDTH / 2]],
+        [letras[2], p3 + HANCHO / 2, HEPTAWIDTH - HEPTAWIDTH / 3 + gap]],
 
-    //Abajo
-    $ctx.beginPath();
-    $ctx.moveTo(p1, HEPTAWIDTH)
-    $ctx.lineTo(p4, HEPTAWIDTH - HANCHO);
-    $ctx.lineTo(p3, HEPTAWIDTH - HANCHO);
-    $ctx.lineTo(p2, HEPTAWIDTH)
-    $ctx.lineTo(p1, HEPTAWIDTH)
-    $ctx.stroke()
-    $ctx.fill();
+        "Abajo": [[[p1, HEPTAWIDTH], [p4, HEPTAWIDTH - HANCHO], [p3, HEPTAWIDTH - HANCHO],
+        [p2, HEPTAWIDTH], [p1, HEPTAWIDTH]],
+        [letras[3], HEPTAWIDTH / 2 - gap, HEPTAWIDTH - HANCHO / 2 + gap]],
 
-    //Abajo izquierda
-    $ctx.beginPath();
-    $ctx.moveTo(p1, HEPTAWIDTH)
-    $ctx.lineTo(0, HEPTAWIDTH / 2);
-    $ctx.lineTo(HANCHO, HEPTAWIDTH / 2);
-    $ctx.lineTo(p4, HEPTAWIDTH - HANCHO);
-    $ctx.lineTo(p1, HEPTAWIDTH)
-    $ctx.stroke()
-    $ctx.fill();
+        "AbajoIzquierda": [[[p1, HEPTAWIDTH], [0, HEPTAWIDTH / 2], [HANCHO, HEPTAWIDTH / 2],
+        [p4, HEPTAWIDTH - HANCHO], [p1, HEPTAWIDTH]],
+        [letras[4], p1 - HANCHO / 2 + gap, HEPTAWIDTH - HEPTAWIDTH / 3 + gap]],
 
-    //Arriba izquierda
-    $ctx.beginPath();
-    $ctx.moveTo(0, HEPTAWIDTH / 2)
-    $ctx.lineTo(HANCHO, HEPTAWIDTH / 2);
-    $ctx.lineTo(p4, HANCHO);
-    $ctx.lineTo(p1, 0);
-    $ctx.lineTo(0, HEPTAWIDTH / 2)
-    $ctx.stroke()
-    $ctx.fill();
+        "ArribaIzquierda": [[[0, HEPTAWIDTH / 2], [HANCHO, HEPTAWIDTH / 2],
+        [p4, HANCHO], [p1, 0], [0, HEPTAWIDTH / 2]],
+        [letras[5], p1 - HANCHO / 2 + gap, HEPTAWIDTH / 3 + gap]],
 
-    $ctx.fillStyle = "rgb(0 0 0)";
+        "Centro": [[[p4, HANCHO], [p3, HANCHO], [HEPTAWIDTH - HANCHO, HEPTAWIDTH / 2],
+        [p3, HEPTAWIDTH - HANCHO], [p4, HEPTAWIDTH - HANCHO], [HANCHO, HEPTAWIDTH / 2], [p4, HANCHO]],
+        [letras[6], HEPTAWIDTH / 2 - gap, HEPTAWIDTH / 2 + gap]]
+    }
+
+    $ctx.lineWidth = 5
     $ctx.font = LETTERSIZE + "px Arial";
-    var gap = LETTERSIZE / 3
-    $ctx.fillText(letras[0].toUpperCase(), HEPTAWIDTH / 2 - gap, HANCHO / 2 + gap);
-    $ctx.fillText(letras[1].toUpperCase(), p3 + HANCHO / 2, HEPTAWIDTH / 3 + gap);
-    $ctx.fillText(letras[2].toUpperCase(), p3 + HANCHO / 2, HEPTAWIDTH - HEPTAWIDTH / 3 + gap);
-    $ctx.fillText(letras[3].toUpperCase(), HEPTAWIDTH / 2 - gap, HEPTAWIDTH - HANCHO / 2 + gap);
-    $ctx.fillText(letras[4].toUpperCase(), p1 - HANCHO / 2 + gap, HEPTAWIDTH - HEPTAWIDTH / 3 + gap);
-    $ctx.fillText(letras[5].toUpperCase(), p1 - HANCHO / 2 + gap, HEPTAWIDTH / 3 + gap);
 
-    //Letra Central = > Letra principal
-    $ctx.fillText(letras[6].toUpperCase(), HEPTAWIDTH / 2 - gap, HEPTAWIDTH / 2 + gap);
-
+    for (var i in zonas) {
+        var temp = new Path2D()
+        for (var j in zonas[i][0]) {
+            temp.lineTo(zonas[i][0][j][0], zonas[i][0][j][1])
+        }
+        $ctx.stroke(temp)
+        if (i == "Centro")
+            $ctx.fillStyle = "white"
+        else
+            $ctx.fillStyle = "rgb(200 200 200)";
+        $ctx.fill(temp)
+        $ctx.fillStyle="rgb(0 0 0)"
+        $ctx.fillText(zonas[i][1][0].toUpperCase(), zonas[i][1][1], zonas[i][1][2])
+        PATHS[i] = [temp, zonas[i][1][0].toUpperCase(), zonas[i][1][1], zonas[i][1][2]]
+    }
 
     function g2r(grados) {
         return grados * Math.PI / 180

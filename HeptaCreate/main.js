@@ -16,6 +16,7 @@ const NUMLETRAS = 7 // Heptagrama :-)
 const HEPTAWIDTH = 300
 const HANCHO = 75
 const LETTERSIZE = 30
+const PATHS = {}
 
 //ID's del Modal Generar
 const $generaModal = document.getElementById("generaModal")
@@ -65,6 +66,7 @@ var timer = setInterval(contador, 1000)
 //Eventos
 function palabraInput(e) {
     var temp = letraPrincipal + array2str(letrasOpcionales)
+    
     if (e.key == "Backspace") {
         palabra = palabra.slice(0, palabra.length - 1)
         $palabraInput.innerText = palabra.toUpperCase()
@@ -107,31 +109,6 @@ function palabraInput(e) {
         }
     } else { //letra invalida
         if (palabra.length == 0) $palabraInput.innerText = ""
-    }
-}
-
-function letraInput(e, tipo, numLetra) {
-    if ($auto.checked) // En modo automatico no se pueden cambiar las letras
-        return
-    var $letra = document.getElementById("letraO" + numLetra)
-    var letraObli = ""
-    var letrasOp = []
-
-    if (e.key == "Backspace") {
-        $letra.innerHTML = ""
-        if (tipo) { //true if letra obligatoria
-            letraObli = ""
-        } else { //letra Opcional
-            letrasOp[numLetra - 1] = ""
-        }
-    } else if (e.key >= "a" && e.key <= "z" || e.key == "ñ") {
-        if (tipo) {
-            letraObli = e.key.toUpperCase()
-            $letra.innerHTML = e.key.toUpperCase()
-        } else {
-            letrasOp[numLetra - 1] = e.key.toUpperCase()
-            $letra.innerHTML = e.key.toUpperCase()
-        }
     }
 }
 
@@ -185,7 +162,7 @@ $revolver.addEventListener("click", function () {
     dibujaHepta((reordena(letrasOpcionales)).concat([letraPrincipal]))
 })
 
-$pause.addEventListener("click", function(){
+$pause.addEventListener("click", function () {
     isPaused = !isPaused
 
     if (isPaused) {//Pausamos el juego
@@ -209,6 +186,66 @@ $generar.addEventListener("click", function () {
     const myModal = new bootstrap.Modal($generaModal)
     myModal.toggle()
 })
+
+$canvas.addEventListener("mousemove", function (e) {
+    for (var i in PATHS) {
+        if ($ctx.isPointInPath(PATHS[i][0], e.offsetX, e.offsetY)) {
+            $ctx.fillStyle = "lightblue"
+            $ctx.lineWidth = 5
+            $ctx.stroke(PATHS[i][0])
+            $ctx.fill(PATHS[i][0])
+            $ctx.fillStyle = "rgb(0 0 0)"
+            $ctx.fillText(PATHS[i][1].toUpperCase(), PATHS[i][2], PATHS[i][3])
+        } else {
+            if (i == "Centro")
+                $ctx.fillStyle = "white"
+            else
+                $ctx.fillStyle = "rgb(200 200 200)"
+            $ctx.lineWidth = 5
+            $ctx.stroke(PATHS[i][0])
+            $ctx.fill(PATHS[i][0])
+            $ctx.fillStyle = "rgb(0 0 0)"
+            $ctx.fillText(PATHS[i][1].toUpperCase(), PATHS[i][2], PATHS[i][3])
+        }
+    }
+})
+
+$canvas.addEventListener("click", function(e){
+    for (var i in PATHS) {
+        if ($ctx.isPointInPath(PATHS[i][0], e.offsetX, e.offsetY)) {
+            var letra = PATHS[i][1]
+            var ret = {key: letra.toLowerCase()}
+            palabraInput(ret)
+            break
+        }
+    }
+})
+
+//Modal Generar
+function letraInput(e, tipo, numLetra) {
+    if ($auto.checked) // En modo automatico no se pueden cambiar las letras
+        return
+    var $letra = document.getElementById("letraO" + numLetra)
+    var letraObli = ""
+    var letrasOp = []
+
+    if (e.key == "Backspace") {
+        $letra.innerHTML = ""
+        if (tipo) { //true if letra obligatoria
+            letraObli = ""
+        } else { //letra Opcional
+            letrasOp[numLetra - 1] = ""
+        }
+    } else if (e.key >= "a" && e.key <= "z" || e.key == "ñ") {
+        if (tipo) {
+            letraObli = e.key.toUpperCase()
+            $letra.innerHTML = e.key.toUpperCase()
+        } else {
+            letrasOp[numLetra - 1] = e.key.toUpperCase()
+            $letra.innerHTML = e.key.toUpperCase()
+        }
+    }
+}
 
 $auto.addEventListener('change', function () {
     if ($auto.checked) {
@@ -281,24 +318,6 @@ function actualizaMensaje(estado) {
     }
 }
 
-function updateScore() {
-    var temp = "<table class='table table-bordered text-start'><tr><td>Palabras Encontradas</td>"
-        + "<td>" + numPalabrasDescubiertas + "/" + numPalabras + "</td>"
-        + "<td>" + (numPalabrasDescubiertas / numPalabras * 100).toFixed() + "%</td></tr>"
-
-    var i = ""
-    if (numHeptas == 0)
-        i = "0"
-    else
-        i = (numHeptasDescubiertos / numHeptas * 100).toFixed()
-
-    temp = temp + "<tr><td>Heptas Encontrados</td>"
-        + "<td>" + numHeptasDescubiertos + "/" + numHeptas + "</td>"
-        + "<td>" + i + "%</td></tr></table>"
-
-    $score.innerHTML = temp
-}
-
 //Modal Resultados
 
 $resultados.addEventListener("click", function () {
@@ -324,17 +343,17 @@ function ordenaResultados(modo) {
     switch (modo) {
         case 'fecha':
             $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 últimas jugadas"
-            historico = ultimosElementos(historico,10)
+            historico = ultimosElementos(historico, 10)
             break
         case 'palabra':
             $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de palabras encontradas"
             historico.sort(function (a, b) { return a["percentPalabras"] - b["percentPalabras"] })
-            historico = ultimosElementos(historico,10)
+            historico = ultimosElementos(historico, 10)
             break
         case 'heptas':
             $resultadosTitulo.innerHTML = "Histórico de Resultados: 10 jugadas con mayor numero de Heptas encontrados"
             historico.sort(function (a, b) { return a["percentHeptas"] - b["percentHeptas"] })
-            historico = ultimosElementos(historico,10)
+            historico = ultimosElementos(historico, 10)
             break
     }
     for (var juego in historico) {
@@ -384,4 +403,22 @@ function contador() {
         minutos++
     }
     $crono.innerHTML = '<b>' + minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0') + '</b>'
+}
+
+function updateScore() {
+    var temp = "<table class='table table-bordered text-start'><tr><td>Palabras Encontradas</td>"
+        + "<td>" + numPalabrasDescubiertas + "/" + numPalabras + "</td>"
+        + "<td>" + (numPalabrasDescubiertas / numPalabras * 100).toFixed() + "%</td></tr>"
+
+    var i = ""
+    if (numHeptas == 0)
+        i = "0"
+    else
+        i = (numHeptasDescubiertos / numHeptas * 100).toFixed()
+
+    temp = temp + "<tr><td>Heptas Encontrados</td>"
+        + "<td>" + numHeptasDescubiertos + "/" + numHeptas + "</td>"
+        + "<td>" + i + "%</td></tr></table>"
+
+    $score.innerHTML = temp
 }
