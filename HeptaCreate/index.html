@@ -68,9 +68,9 @@
             <div class="row">
                 <div class="col">
                     <canvas id="principal" width="350" height="350"></canvas>
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-evenly">
                         <div>
-                            <button class="btn button-main" type="button" onclick="palabraInput({key: 'Backspace'})">Borrar</button>
+                            <button class="btn btn-outline-dark" type="button" id="backspace" onclick="palabraInput({key: 'Backspace'})">Borrar</button>
                         </div>
                         <div>
                         <button class="btn button-main" type="button" id="revolver">
@@ -79,7 +79,7 @@
                         </button>
                         </div>
                         <div>
-                            <button class="btn button-main" type="button" onclick="palabraInput({key: 'Enter'})">Enter</button>
+                            <button class="btn btn-outline-dark" type="button" id="enter" onclick="palabraInput({key: 'Enter'})">Enter</button>
                         </div>
                     </div>
                 </div>

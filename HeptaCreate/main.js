@@ -66,7 +66,7 @@ var timer = setInterval(contador, 1000)
 //Eventos
 function palabraInput(e) {
     var temp = letraPrincipal + array2str(letrasOpcionales)
-    
+
     if (e.key == "Backspace") {
         palabra = palabra.slice(0, palabra.length - 1)
         $palabraInput.innerText = palabra.toUpperCase()
@@ -156,6 +156,9 @@ $resolver.addEventListener("click", function () {
     $palabras.innerHTML = print + "</table>"
     $palabraInput.disabled = true
     $revolver.disabled = true
+    $canvas.style.pointerEvents = "none"
+    document.getElementById("backspace").disabled = true
+    document.getElementById("enter").disabled = true
 })
 
 $revolver.addEventListener("click", function () {
@@ -167,8 +170,16 @@ $pause.addEventListener("click", function () {
 
     if (isPaused) {//Pausamos el juego
         $palabraInput.disabled = true
+        $canvas.style.pointerEvents = "none"
+        $revolver.disabled = true
+        document.getElementById("backspace").disabled = true
+        document.getElementById("enter").disabled = true
     } else { //Rearrancamos
         $palabraInput.disabled = false
+        $canvas.style.pointerEvents = ""
+        $revolver.disabled = false
+        document.getElementById("backspace").disabled = false
+        document.getElementById("enter").disabled = false
     }
 })
 
@@ -210,11 +221,11 @@ $canvas.addEventListener("mousemove", function (e) {
     }
 })
 
-$canvas.addEventListener("click", function(e){
+$canvas.addEventListener("click", function (e) {
     for (var i in PATHS) {
         if ($ctx.isPointInPath(PATHS[i][0], e.offsetX, e.offsetY)) {
             var letra = PATHS[i][1]
-            var ret = {key: letra.toLowerCase()}
+            var ret = { key: letra.toLowerCase() }
             palabraInput(ret)
             break
         }
