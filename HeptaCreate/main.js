@@ -155,6 +155,7 @@ $resolver.addEventListener("click", function () {
     registrar()
     $palabras.innerHTML = print + "</table>"
     $palabraInput.disabled = true
+    $resolver.disabled = true
     $revolver.disabled = true
     $canvas.style.pointerEvents = "none"
     document.getElementById("backspace").disabled = true
@@ -402,6 +403,7 @@ function restart(letras) {
 
     $palabraInput.disabled = false
     $revolver.disabled = false
+    $resolver.disabled = false
     isPaused = false
 }
 
