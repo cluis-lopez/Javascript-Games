@@ -147,7 +147,7 @@ function letrasValidas(let) {
 }
 
 function registrar() {
-    //Delvuelve estructura con los datos del juego
+    //Almacena en LocalStorage estructura con los datos del juego
     var ret = {}
     ret["Fecha"] = new Date().toISOString()
     var time = minutos.toString().padStart(2, '0') + ':' + segundos.toString().padStart(2, '0')
@@ -177,7 +177,6 @@ function registrar() {
         i[1][3].forEach((x) => temp.push(x)) //Añadimos las palabras ya encontradas
     }
     ret["PalabrasEncontradas"] = temp
-    console.log(ret)
 
     var history = JSON.parse(localStorage.getItem("gameHistory"))
     if (history == null) { //First store

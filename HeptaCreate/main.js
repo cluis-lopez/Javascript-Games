@@ -160,6 +160,7 @@ $resolver.addEventListener("click", function () {
     $canvas.style.pointerEvents = "none"
     document.getElementById("backspace").disabled = true
     document.getElementById("enter").disabled = true
+    $pause.disabled = true
 })
 
 $revolver.addEventListener("click", function () {
@@ -175,12 +176,16 @@ $pause.addEventListener("click", function () {
         $revolver.disabled = true
         document.getElementById("backspace").disabled = true
         document.getElementById("enter").disabled = true
+        $crono.classList.add("paused")
+        $pause.classList.add("paused")
     } else { //Rearrancamos
         $palabraInput.disabled = false
         $canvas.style.pointerEvents = ""
         $revolver.disabled = false
         document.getElementById("backspace").disabled = false
         document.getElementById("enter").disabled = false
+        $crono.classList.remove("paused")
+        $pause.classList.remove("paused")
     }
 })
 
@@ -371,6 +376,8 @@ function ordenaResultados(modo) {
     for (var juego in historico) {
         $resultadosContent.append(nuevaLineaResultados(historico[juego]))
     }
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 }
 
 $resultadosModal.addEventListener("hidden.bs.modal", function () {

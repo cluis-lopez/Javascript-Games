@@ -220,7 +220,7 @@ function dibujaHepta(letras) {
         else
             $ctx.fillStyle = "rgb(200 200 200)";
         $ctx.fill(temp)
-        $ctx.fillStyle="rgb(0 0 0)"
+        $ctx.fillStyle = "rgb(0 0 0)"
         $ctx.fillText(zonas[i][1][0].toUpperCase(), zonas[i][1][1], zonas[i][1][2])
         PATHS[i] = [temp, zonas[i][1][0].toUpperCase(), zonas[i][1][1], zonas[i][1][2]]
     }
@@ -250,6 +250,9 @@ function nuevaLineaResultados(juego) {
     var desc = juego["PalabrasDescubiertas"]
     var tot = juego["PalabrasTotales"]
     cell.innerHTML = desc + "/" + tot + "  "
+    cell.setAttribute("data-bs-toggle", "popover")
+    cell.setAttribute("data-bs-content", juego["PalabrasEncontradas"])
+    cell.setAttribute("data-bs-trigger", "hover")
     ret.appendChild(cell)
     cell = document.createElement("td")
     cell.innerHTML = (juego["percentPalabras"] * 100).toFixed() + "%"
@@ -259,6 +262,17 @@ function nuevaLineaResultados(juego) {
     desc = juego["HeptasDescubiertos"]
     tot = juego["HeptasTotales"]
     cell.innerHTML = desc + "/" + tot + "  "
+    if (tot > 0) {
+        var temp = []
+        var letras = [juego["LetraObligatoria"]].concat(juego["LetrasOpcionales"])
+        for (i of juego["PalabrasEncontradas"]) {
+            if (esHeptaPalabra(i, letras))
+                temp.push(i)
+        }
+        cell.setAttribute("data-bs-toggle", "popover")
+        cell.setAttribute("data-bs-content", temp)
+        cell.setAttribute("data-bs-trigger", "hover")
+    }
     ret.appendChild(cell)
     cell = document.createElement("td")
     cell.innerHTML = (juego["percentHeptas"] * 100).toFixed() + "%"
