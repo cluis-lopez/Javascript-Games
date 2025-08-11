@@ -263,14 +263,14 @@ function nuevaLineaResultados(juego) {
     tot = juego["HeptasTotales"]
     cell.innerHTML = desc + "/" + tot + "  "
     if (tot > 0) {
-        var temp = []
+        var heptas = []
         var letras = [juego["LetraObligatoria"]].concat(juego["LetrasOpcionales"])
-        for (i of juego["PalabrasEncontradas"]) {
-            if (esHeptaPalabra(i, letras))
-                temp.push(i)
-        }
+        juego["PalabrasEncontradas"].forEach(x=>{
+            if (esHeptaPalabra(desacentua(x), letras))
+                heptas.push(x)
+        })
         cell.setAttribute("data-bs-toggle", "popover")
-        cell.setAttribute("data-bs-content", temp)
+        cell.setAttribute("data-bs-content", heptas)
         cell.setAttribute("data-bs-trigger", "hover")
     }
     ret.appendChild(cell)
