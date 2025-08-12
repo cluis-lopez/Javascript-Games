@@ -251,6 +251,7 @@ function nuevaLineaResultados(juego) {
     var tot = juego["PalabrasTotales"]
     cell.innerHTML = desc + "/" + tot + "  "
     cell.setAttribute("data-bs-toggle", "popover")
+    cell.setAttribute("data-bs-title", "Palabras Descubiertas")
     cell.setAttribute("data-bs-content", juego["PalabrasEncontradas"])
     cell.setAttribute("data-bs-trigger", "hover")
     ret.appendChild(cell)
@@ -270,6 +271,7 @@ function nuevaLineaResultados(juego) {
                 heptas.push(x)
         })
         cell.setAttribute("data-bs-toggle", "popover")
+        cell.setAttribute("data-bs-title", "Heptas Descubiertos")
         cell.setAttribute("data-bs-content", heptas)
         cell.setAttribute("data-bs-trigger", "hover")
     }
