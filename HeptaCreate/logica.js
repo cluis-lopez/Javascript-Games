@@ -5,6 +5,7 @@ function generaLetras() {
     var numConsonantes = NUMLETRAS - numVocales
     var vocales = [...VOCALES]
     var consonantes = [...CONSONANTES]
+    
     for (var i = 0; i < numVocales; i++) {
         //var index = Math.floor(Math.random() * vocales.length)
         var pesosVocales = []

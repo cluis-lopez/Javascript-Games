@@ -157,7 +157,23 @@ function listadoPalabras(datos) {
                 temp.push(x)
         })
 
-        text = text + "<tr><td class='text-start'>Palabras que empiezan con <b>" + i[0].toUpperCase() +
+        var pc = i[1][0]/i[1][1] //Porcentaje descubierto
+        var linecolor = ""
+        switch (true){
+            case (pc < 0.25):
+                linecolor = "Black"
+                break
+            case (pc >= 0.25 && pc < 0.50):
+                linecolor = "DarkRed"
+                break
+            case (pc >= 0.50 && pc < 0.75):
+                linecolor = "SlateBlue"
+                break
+            default:
+                linecolor = "Green"
+        }
+
+        text = text + "<tr><td class='text-start' style='color: "+linecolor+";'>Palabras que empiezan con <b>" + i[0].toUpperCase() +
             "</b> " + i[1][0] + "/" + i[1][1] + ": </td><td>"
         temp.forEach((x) => text = text + x + ", ")
         text = text + "</td></tr>"
